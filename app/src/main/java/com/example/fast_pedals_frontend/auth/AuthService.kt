@@ -1,14 +1,10 @@
-package com.example.fast_pedals_frontend.app
+package com.example.fast_pedals_frontend.auth
 
-import com.example.fast_pedals_frontend.auth.LoginRequest
-import com.example.fast_pedals_frontend.auth.LoginResponse
-import com.example.fast_pedals_frontend.auth.RegisterRequest
-import com.example.fast_pedals_frontend.auth.RegisterResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface ApiService {
+interface AuthService {
 
     @POST("/api/register")
     suspend fun register(

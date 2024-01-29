@@ -1,7 +1,6 @@
 package com.example.fast_pedals_frontend.auth
 
 import androidx.lifecycle.ViewModel
-import com.example.fast_pedals_frontend.app.RetrofitInstance
 import retrofit2.Response
 
 class AuthViewModel : ViewModel() {

@@ -5,6 +5,12 @@
       <entry key="GreetingPreview">
         <State />
       </entry>
+      <entry key="RegisterScreenPreview">
+        <State />
+      </entry>
+      <entry key="WelcomeScreenPreview">
+        <State />
+      </entry>
     </value>
   </component>
 </project>

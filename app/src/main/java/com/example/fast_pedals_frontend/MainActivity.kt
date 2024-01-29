@@ -9,8 +9,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.fast_pedals_frontend.app.NavigationHost
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +24,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Anddddroid")
+                    val navController = rememberNavController()
+
+                    NavigationHost(navController = navController)
                 }
             }
         }

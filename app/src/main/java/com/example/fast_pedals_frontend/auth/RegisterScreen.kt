@@ -1,35 +1,26 @@
 package com.example.fast_pedals_frontend.auth
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.material3.ExperimentalMaterial3Api
-
-
+import androidx.navigation.NavController
+import com.example.fast_pedals_frontend.Greeting
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,10 +32,11 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
     var phoneNumber by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
 
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Register") },
@@ -55,11 +47,11 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
                 }
             )
         },
-        content = {
+        content = { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(paddingValues),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -129,20 +121,24 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
                         .fillMaxWidth()
                         .padding(8.dp)
                 )
-                Button(onClick = {
-                    // Call the register function in the ViewModel
-                    viewModel().launch {
-                        val response = authViewModel.register(name, email, password, fullName, phoneNumber)
-                        if (response.isSuccessful) {
-                            // Registration successful, navigate to the next screen or perform necessary actions
+                Button(
+                    onClick = {
+                        scope.launch {
                             onRegisterComplete()
-                        } else {
-                            // Handle registration failure
-                            // You can extract error information from the response, if needed
-                            scaffoldState.snackbarHostState.showSnackbar("Registration failed")
+
+                            val response = authViewModel.register(name, email, password, fullName, phoneNumber)
+                            if (response.isSuccessful) {
+
+                                onRegisterComplete()
+                            } else {
+                                snackbarHostState.showSnackbar("Registration failed")
+                            }
                         }
-                    }
-                }) {
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
                     Text("Register")
                 }
             }
@@ -153,7 +149,6 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    FastPedalsFrontEndTheme {
-        RegisterScreen(onRegisterComplete = {})
-    }
+    val authViewModel = AuthViewModel() // Initialize your ViewModel here
+    RegisterScreen(authViewModel = authViewModel, onRegisterComplete = {})
 }
