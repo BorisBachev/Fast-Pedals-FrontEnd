@@ -1,25 +1,29 @@
 package com.example.fast_pedals_frontend.auth
 
 import androidx.lifecycle.ViewModel
+import com.example.fast_pedals_frontend.auth.login.LoginRequest
+import com.example.fast_pedals_frontend.auth.login.LoginResponse
+import com.example.fast_pedals_frontend.auth.register.RegisterRequest
+import com.example.fast_pedals_frontend.auth.register.RegisterResponse
 import retrofit2.Response
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(
 
-    private val apiService = RetrofitInstance.api
+    private val authService: AuthService
 
-    suspend fun register(
-        name: String,
-        email: String,
-        password: String,
-        fullName: String,
-        phoneNumber: String
-    ): Response<RegisterResponse> {
-        val request = RegisterRequest(name, email, password, fullName, phoneNumber)
-        return apiService.register(request)
+) : ViewModel() {
+    //private val apiService = RetrofitAuth.api
+
+    suspend fun register(): Response<RegisterResponse> {
+        return authService.register(
+            "name",
+            "email",
+            "password",
+            "fullName",
+            "phoneNumber")
     }
 
     suspend fun login(email: String, password: String): Response<LoginResponse> {
-        val request = LoginRequest(email, password)
-        return apiService.login(request)
+        return authService.login(email, password)
     }
 }

@@ -1,4 +1,4 @@
-package com.example.fast_pedals_frontend.auth
+package com.example.fast_pedals_frontend.auth.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -18,13 +17,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.navigation.NavController
-import com.example.fast_pedals_frontend.Greeting
+import androidx.navigation.compose.rememberNavController
+import com.example.fast_pedals_frontend.Navigation.NavDestinations
+import com.example.fast_pedals_frontend.auth.AuthViewModel
+import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplete: () -> Unit) {
+fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onBack: () -> Unit, onRegisterComplete: () -> Unit) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -41,7 +42,7 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
             TopAppBar(
                 title = { Text("Register") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle navigation back if needed */ }) {
+                    IconButton(onClick = { onBack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 }
@@ -124,7 +125,6 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
                 Button(
                     onClick = {
                         scope.launch {
-                            onRegisterComplete()
 
                             val response = authViewModel.register(name, email, password, fullName, phoneNumber)
                             if (response.isSuccessful) {
@@ -149,6 +149,11 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    val authViewModel = AuthViewModel() // Initialize your ViewModel here
-    RegisterScreen(authViewModel = authViewModel, onRegisterComplete = {})
+    val authViewModel = AuthViewModel()
+    val navController = rememberNavController()
+    FastPedalsFrontEndTheme {
+        RegisterScreen(authViewModel = authViewModel,
+            onBack = { navController.navigate(NavDestinations.WELCOME) },
+            onRegisterComplete = {})
+    }
 }

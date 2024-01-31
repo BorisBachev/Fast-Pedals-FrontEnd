@@ -17,12 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.fast_pedals_frontend.Navigation.NavigationHost
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @Composable
-fun WelcomeScreen(navController: NavController) {
+fun WelcomeScreen(toRegister: () -> Unit, toLogin: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,7 +34,7 @@ fun WelcomeScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { navController.navigate("register") },
+            onClick = { toRegister() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
@@ -46,7 +46,7 @@ fun WelcomeScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = { navController.navigate("login") },
+            onClick = { toLogin() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
@@ -62,6 +62,7 @@ fun WelcomeScreen(navController: NavController) {
 fun WelcomeScreenPreview() {
     val navController = rememberNavController()
     FastPedalsFrontEndTheme {
-        WelcomeScreen(navController = navController)
+
+        NavigationHost(navController = navController)
     }
 }

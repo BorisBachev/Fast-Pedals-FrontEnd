@@ -1,4 +1,4 @@
-package com.example.fast_pedals_frontend.auth
+package com.example.fast_pedals_frontend.auth.login
 
 data class LoginRequest(
     val email: String,
