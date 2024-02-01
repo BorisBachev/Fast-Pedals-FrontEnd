@@ -18,7 +18,7 @@ class AuthServiceImpl(
         phoneNumber: String
     ): Response<RegisterResponse> {
         val request = RegisterRequest(name, email, password, fullName, phoneNumber)
-         authApi.register(request).isSuccessful
+        return authApi.register(request)
     }
 
     override suspend fun login(email: String, password: String): Response<LoginResponse> {

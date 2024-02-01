@@ -13,17 +13,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.fast_pedals_frontend.Navigation.NavigationHost
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
-import org.koin.core.context.GlobalContext.startKoin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        startKoin{
-            modules(appModule)
-        }
+
         super.onCreate(savedInstanceState)
         setContent {
             FastPedalsFrontEndTheme {
-                // A surface container using the 'background' color from the theme
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

@@ -2,7 +2,6 @@ package com.example.fast_pedals_frontend.auth.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -12,6 +11,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -25,7 +34,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onBack: () -> Unit, onRegisterComplete: () -> Unit) {
+fun RegisterScreen(
+    onBack: () -> Unit,
+    onRegisterComplete: () -> Unit)
+{
+    val authViewModel: AuthViewModel = viewModel()
+
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -149,11 +163,11 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onBack: () -> Uni
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    val authViewModel = AuthViewModel()
     val navController = rememberNavController()
     FastPedalsFrontEndTheme {
-        RegisterScreen(authViewModel = authViewModel,
+        RegisterScreen(
             onBack = { navController.navigate(NavDestinations.WELCOME) },
-            onRegisterComplete = {})
+            onRegisterComplete = { navController.navigate(NavDestinations.LOGIN) }
+        )
     }
 }

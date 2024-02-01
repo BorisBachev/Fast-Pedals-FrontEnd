@@ -21,14 +21,12 @@ fun NavigationHost(navController: NavHostController) {
         }
         composable(NavDestinations.REGISTER) {
             RegisterScreen(
-                authViewModel = AuthViewModel(),
                 onBack = { navController.navigate(NavDestinations.WELCOME) },
                 onRegisterComplete = { navController.navigate(NavDestinations.WELCOME) }
             )
         }
         composable(NavDestinations.LOGIN) {
             LoginScreen(
-                authViewModel = AuthViewModel(),
                 onBack = { navController.navigate(NavDestinations.WELCOME) },
                 onLoginComplete = { navController.navigate(NavDestinations.WELCOME) }
             )

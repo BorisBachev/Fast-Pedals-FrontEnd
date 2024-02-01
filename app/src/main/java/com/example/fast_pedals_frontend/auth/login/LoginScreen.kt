@@ -2,7 +2,6 @@ package com.example.fast_pedals_frontend.auth.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -12,6 +11,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -25,7 +34,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(authViewModel: AuthViewModel = viewModel(), onBack: () -> Unit, onLoginComplete: () -> Unit) {
+fun LoginScreen(
+    onBack: () -> Unit,
+    onLoginComplete: () -> Unit)
+{
+    val authViewModel: AuthViewModel = viewModel()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
@@ -115,10 +129,9 @@ fun LoginScreen(authViewModel: AuthViewModel = viewModel(), onBack: () -> Unit, 
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    val authViewModel = AuthViewModel()
     val navController = rememberNavController()
     FastPedalsFrontEndTheme {
-        LoginScreen(authViewModel = authViewModel,
+        LoginScreen(
             onBack = { navController.navigate(NavDestinations.WELCOME) },
             onLoginComplete = { navController.navigate(NavDestinations.WELCOME) })
     }

@@ -22,7 +22,10 @@ import com.example.fast_pedals_frontend.Navigation.NavigationHost
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @Composable
-fun WelcomeScreen(toRegister: () -> Unit, toLogin: () -> Unit) {
+fun WelcomeScreen(
+    toRegister: () -> Unit,
+    toLogin: () -> Unit)
+{
     Column(
         modifier = Modifier
             .fillMaxSize()
