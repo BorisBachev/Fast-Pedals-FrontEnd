@@ -73,9 +73,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("io.insert-koin:koin-core:3.1.2")
-    implementation("io.insert-koin:koin-android:3.1.2")
-    implementation("io.insert-koin:koin-androidx-compose:3.1.2")
-    testImplementation("io.insert-koin:koin-test:3.1.2")
+    implementation("androidx.compose.runtime:runtime-livedata:1.0.5")
+    implementation("io.insert-koin:koin-core:3.3.2")
+    implementation("io.insert-koin:koin-android:3.3.2")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.1")
 
 }

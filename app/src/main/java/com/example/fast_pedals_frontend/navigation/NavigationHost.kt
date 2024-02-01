@@ -4,13 +4,22 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.fast_pedals_frontend.auth.login.LogInViewModel
 import com.example.fast_pedals_frontend.auth.login.LoginScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterScreen
 import com.example.fast_pedals_frontend.auth.WelcomeScreen
-import com.example.fast_pedals_frontend.mainPage.MainScreen
+import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
+import com.example.fast_pedals_frontend.search.SearchScreen
+import com.example.fast_pedals_frontend.search.SearchViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NavigationHost(navController: NavHostController) {
+
+    val loginViewModel: LogInViewModel = koinViewModel()
+    val registerViewModel: RegisterViewModel = koinViewModel()
+    val searchViewModel: SearchViewModel = koinViewModel()
+
     NavHost(navController, startDestination = NavDestinations.WELCOME) {
         composable(NavDestinations.WELCOME) {
             WelcomeScreen(
@@ -20,16 +29,24 @@ fun NavigationHost(navController: NavHostController) {
         }
         composable(NavDestinations.REGISTER) {
             RegisterScreen(
+                registerViewModel = registerViewModel,
                 onBack = { navController.navigate(NavDestinations.WELCOME) },
-                onRegisterComplete = { navController.navigate(NavDestinations.WELCOME) }
+                onRegisterComplete = { navController.navigate(NavDestinations.SEARCH) }
             )
         }
         composable(NavDestinations.LOGIN) {
             LoginScreen(
+                loginViewModel = loginViewModel,
                 onBack = { navController.navigate(NavDestinations.WELCOME) },
-                onLoginComplete = { navController.navigate(NavDestinations.WELCOME) }
+                onLoginComplete = { navController.navigate(NavDestinations.SEARCH) }
             )
         }
-        composable(NavDestinations.MAIN) { MainScreen() }
+        composable(NavDestinations.SEARCH) {
+            SearchScreen(
+                searchViewModel = searchViewModel,
+                onBack = { navController.navigate(NavDestinations.WELCOME) },
+                onSearch = { navController.navigate(NavDestinations.WELCOME) }
+            )
+        }
     }
 }

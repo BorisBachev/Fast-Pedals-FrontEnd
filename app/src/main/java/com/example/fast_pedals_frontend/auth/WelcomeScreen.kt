@@ -15,57 +15,48 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
-import com.example.fast_pedals_frontend.navigation.NavigationHost
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @Composable
 fun WelcomeScreen(
     toRegister: () -> Unit,
-    toLogin: () -> Unit)
+    toLogin: () -> Unit
+)
 {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Welcome to Fast Pedals!")
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { toRegister() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
-            Text("Register")
-            Icon(Icons.Default.ArrowForward, contentDescription = null)
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            onClick = { toLogin() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
-            Text("Login")
-            Icon(Icons.Default.ArrowForward, contentDescription = null)
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WelcomeScreenPreview() {
-    val navController = rememberNavController()
     FastPedalsFrontEndTheme {
 
-        NavigationHost(navController = navController)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Welcome to Fast Pedals!")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = { toRegister() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text("Register")
+                Icon(Icons.Default.ArrowForward, contentDescription = null)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = { toLogin() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text("Login")
+                Icon(Icons.Default.ArrowForward, contentDescription = null)
+            }
+        }
     }
 }

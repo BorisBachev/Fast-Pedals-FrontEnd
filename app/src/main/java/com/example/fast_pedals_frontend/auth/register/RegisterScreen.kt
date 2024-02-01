@@ -5,9 +5,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -26,25 +24,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.navigation.compose.rememberNavController
-import com.example.fast_pedals_frontend.navigation.NavDestinations
-import com.example.fast_pedals_frontend.auth.AuthViewModel
-import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
+    registerViewModel: RegisterViewModel,
     onBack: () -> Unit,
     onRegisterComplete: () -> Unit)
 {
-    val authViewModel: AuthViewModel = viewModel()
 
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var fullName by remember { mutableStateOf("") }
-    var phoneNumber by remember { mutableStateOf("") }
+    val name by registerViewModel.name.collectAsState()
+    val email by registerViewModel.email.collectAsState()
+    val password by registerViewModel.password.collectAsState()
+    val fullName by registerViewModel.fullName.collectAsState()
+    val phoneNumber by registerViewModel.phoneNumber.collectAsState()
     var passwordVisibility by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -72,7 +66,7 @@ fun RegisterScreen(
             ) {
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { registerViewModel.updateName(it) },
                     label = { Text("Username") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -80,7 +74,7 @@ fun RegisterScreen(
                 )
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { registerViewModel.updateEmail(it) },
                     label = { Text("Email") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Email,
@@ -92,7 +86,7 @@ fun RegisterScreen(
                 )
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { registerViewModel.updatePassword(it) },
                     label = { Text("Password") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
@@ -115,7 +109,7 @@ fun RegisterScreen(
                 )
                 OutlinedTextField(
                     value = fullName,
-                    onValueChange = { fullName = it },
+                    onValueChange = { registerViewModel.updateFullName(it) },
                     label = { Text("Full Name") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next
@@ -126,7 +120,7 @@ fun RegisterScreen(
                 )
                 OutlinedTextField(
                     value = phoneNumber,
-                    onValueChange = { phoneNumber = it },
+                    onValueChange = { registerViewModel.updatePhoneNumber(it) },
                     label = { Text("Phone Number") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Phone,
@@ -140,7 +134,7 @@ fun RegisterScreen(
                     onClick = {
                         scope.launch {
 
-                            val response = authViewModel.register(name, email, password, fullName, phoneNumber)
+                            val response = registerViewModel.register(name, email, password, fullName, phoneNumber)
                             if (response.isSuccessful) {
 
                                 onRegisterComplete()
@@ -158,16 +152,4 @@ fun RegisterScreen(
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RegisterScreenPreview() {
-    val navController = rememberNavController()
-    FastPedalsFrontEndTheme {
-        RegisterScreen(
-            onBack = { navController.navigate(NavDestinations.WELCOME) },
-            onRegisterComplete = { navController.navigate(NavDestinations.LOGIN) }
-        )
-    }
 }

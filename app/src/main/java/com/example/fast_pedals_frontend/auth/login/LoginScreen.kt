@@ -5,9 +5,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -26,22 +24,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.navigation.compose.rememberNavController
-import com.example.fast_pedals_frontend.navigation.NavDestinations
-import com.example.fast_pedals_frontend.auth.AuthViewModel
-import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
+    loginViewModel: LogInViewModel,
     onBack: () -> Unit,
     onLoginComplete: () -> Unit)
 {
-    val authViewModel: AuthViewModel = viewModel()
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val email by loginViewModel.email.collectAsState()
+    val password by loginViewModel.password.collectAsState()
     var passwordVisibility by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -69,7 +63,7 @@ fun LoginScreen(
             ) {
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { loginViewModel.updateEmail(it) },
                     label = { Text("Email") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Email,
@@ -81,7 +75,7 @@ fun LoginScreen(
                 )
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { loginViewModel.updatePassword(it) },
                     label = { Text("Password") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
@@ -106,7 +100,7 @@ fun LoginScreen(
                     onClick = {
                         scope.launch {
 
-                            val response = authViewModel.login(email, password)
+                            val response = loginViewModel.login(email, password)
                             if (response.isSuccessful) {
 
                                 onLoginComplete()
@@ -124,15 +118,4 @@ fun LoginScreen(
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    val navController = rememberNavController()
-    FastPedalsFrontEndTheme {
-        LoginScreen(
-            onBack = { navController.navigate(NavDestinations.WELCOME) },
-            onLoginComplete = { navController.navigate(NavDestinations.WELCOME) })
-    }
 }
