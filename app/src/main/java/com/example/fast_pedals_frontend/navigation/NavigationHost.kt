@@ -1,10 +1,9 @@
-package com.example.fast_pedals_frontend.Navigation
+package com.example.fast_pedals_frontend.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.fast_pedals_frontend.auth.AuthViewModel
 import com.example.fast_pedals_frontend.auth.login.LoginScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterScreen
 import com.example.fast_pedals_frontend.auth.WelcomeScreen

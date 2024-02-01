@@ -27,7 +27,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.compose.rememberNavController
-import com.example.fast_pedals_frontend.Navigation.NavDestinations
+import com.example.fast_pedals_frontend.navigation.NavDestinations
 import com.example.fast_pedals_frontend.auth.AuthViewModel
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.example.fast_pedals_frontend.Navigation
+package com.example.fast_pedals_frontend.navigation
 
 object NavDestinations {
     const val WELCOME = "welcome"
