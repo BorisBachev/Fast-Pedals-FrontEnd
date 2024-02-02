@@ -1,5 +1,7 @@
 package com.example.fast_pedals_frontend
 
+import com.example.fast_pedals_frontend.RetrofitHost.EMULATOR
+import com.example.fast_pedals_frontend.RetrofitHost.PHONE
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.auth.AuthApi
 import com.example.fast_pedals_frontend.auth.AuthService
@@ -25,27 +27,23 @@ val appModule = module {
         }
     }
 
-    single<Interceptor>(named("TokenInterceptor")) { TokenInterceptor(get()) }
-
     single(named("Retrofit")) {
 
         val httpInterceptor = HttpLoggingInterceptor()
         httpInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
-        val tokenInterceptor = get<TokenInterceptor>(named("TokenInterceptor"))
-
         val okHttpClientBuilder = OkHttpClient.Builder()
-            .addInterceptor(tokenInterceptor)
+            .addInterceptor(TokenInterceptor(get()))
             .addInterceptor(httpInterceptor)
 
         Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8080/api/")
+            .baseUrl(EMULATOR)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClientBuilder.build())
             .build()
     }
 
-    single(named("AuthApi")) {
+    single<AuthApi>(named("AuthApi")) {
         get<Retrofit>(named("Retrofit")).create(AuthApi::class.java)
     }
 
@@ -53,13 +51,13 @@ val appModule = module {
         get<Retrofit>(named("Retrofit")).create(ListingApi::class.java)
     }
     single<AuthService> {
-        AuthServiceImpl(get(), get(named("AuthApi")))
+        AuthServiceImpl(get(named("AuthApi")), get())
     }
     viewModel {
-        LogInViewModel(get())
+        LogInViewModel(get<AuthService>())
     }
     viewModel{
-        RegisterViewModel(get())
+        RegisterViewModel(get<AuthService>())
     }
     viewModel {
         SearchViewModel()
