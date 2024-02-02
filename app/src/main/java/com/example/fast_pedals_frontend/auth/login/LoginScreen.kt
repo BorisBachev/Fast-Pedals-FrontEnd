@@ -98,16 +98,10 @@ fun LoginScreen(
                 )
                 Button(
                     onClick = {
-                        scope.launch {
 
-                            val response = loginViewModel.login(email, password)
-                            if (response.isSuccessful) {
+                        loginViewModel.login(email, password)
+                        onLoginComplete()
 
-                                onLoginComplete()
-                            } else {
-                                snackbarHostState.showSnackbar("Authentication failed")
-                            }
-                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()

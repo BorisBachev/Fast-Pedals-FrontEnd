@@ -31,7 +31,6 @@ import kotlinx.coroutines.launch
 fun RegisterScreen(
     registerViewModel: RegisterViewModel,
     onBack: () -> Unit,
-    onRegister: () -> Unit,
     onRegisterComplete: () -> Unit)
 {
 
@@ -135,11 +134,10 @@ fun RegisterScreen(
                 )
                 Button(
                     onClick = {
-                        scope.launch {
 
-                            onRegister()
+                        registerViewModel.register(name, email, password, fullName, phoneNumber)
+                        onRegisterComplete()
 
-                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -160,7 +158,7 @@ fun RegisterScreen(
             }
             RegisterState.Loading -> {
             }
-            RegisterState.Initial -> {
+            RegisterState.None -> {
             }
         }
     }

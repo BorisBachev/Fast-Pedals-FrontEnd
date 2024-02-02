@@ -31,13 +31,6 @@ fun NavigationHost(navController: NavHostController) {
             RegisterScreen(
                 registerViewModel = registerViewModel,
                 onBack = { navController.navigate(NavDestinations.WELCOME) },
-                onRegister = { registerViewModel.register(
-                    registerViewModel.name.value,
-                    registerViewModel.email.value,
-                    registerViewModel.password.value,
-                    registerViewModel.fullName.value,
-                    registerViewModel.phoneNumber.value
-                ) },
                 onRegisterComplete = { navController.navigate(NavDestinations.SEARCH) }
             )
         }

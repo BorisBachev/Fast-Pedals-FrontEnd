@@ -15,7 +15,7 @@ class RegisterViewModel(
 
     ): ViewModel() {
 
-    private val _registerState = mutableStateOf<RegisterState>(RegisterState.Initial)
+    private val _registerState = mutableStateOf<RegisterState>(RegisterState.None)
     val registerState: State<RegisterState> = _registerState
 
     private val _name = MutableStateFlow("")

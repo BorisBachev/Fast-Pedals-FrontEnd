@@ -5,11 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fast_pedals_frontend.auth.AuthService
-import com.example.fast_pedals_frontend.auth.register.RegisterState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Response
 
 class LogInViewModel(
 
@@ -18,7 +16,7 @@ class LogInViewModel(
 
     ) : ViewModel() {
 
-    private val _loginState = mutableStateOf<LoginState>(LoginState.Initial)
+    private val _loginState = mutableStateOf<LoginState>(LoginState.None)
     val loginState: State<LoginState> = _loginState
 
     private val _email = MutableStateFlow("")
@@ -47,7 +45,6 @@ class LogInViewModel(
             }
 
         }
-        return authService.login(email, password)
     }
 
     fun updateEmail(newEmail: String) {
