@@ -6,8 +6,13 @@ import com.example.fast_pedals_frontend.auth.AuthService
 import com.example.fast_pedals_frontend.auth.AuthServiceImpl
 import com.example.fast_pedals_frontend.auth.login.LogInViewModel
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
+import com.example.fast_pedals_frontend.listing.ListingApi
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,15 +24,36 @@ val appModule = module {
             init(androidContext())
         }
     }
-    single {
+
+    single<Interceptor>(named("TokenInterceptor")) { TokenInterceptor(get()) }
+
+    single(named("Retrofit")) {
+
+        val httpInterceptor = HttpLoggingInterceptor()
+        httpInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        val tokenInterceptor = get<TokenInterceptor>(named("TokenInterceptor"))
+
+        val okHttpClientBuilder = OkHttpClient.Builder()
+            .addInterceptor(tokenInterceptor)
+            .addInterceptor(httpInterceptor)
+
         Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8080/api/auth/")
+            .baseUrl("http://10.0.2.2:8080/api/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClientBuilder.build())
             .build()
-            .create(AuthApi::class.java)
+    }
+
+    single(named("AuthApi")) {
+        get<Retrofit>(named("Retrofit")).create(AuthApi::class.java)
+    }
+
+    single(named("ListingApi")) {
+        get<Retrofit>(named("Retrofit")).create(ListingApi::class.java)
     }
     single<AuthService> {
-        AuthServiceImpl(get(), get())
+        AuthServiceImpl(get(), get(named("AuthApi")))
     }
     viewModel {
         LogInViewModel(get())

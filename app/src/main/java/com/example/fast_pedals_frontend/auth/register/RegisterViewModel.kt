@@ -1,16 +1,22 @@
 package com.example.fast_pedals_frontend.auth.register
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.fast_pedals_frontend.auth.AuthService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import retrofit2.Response
+import kotlinx.coroutines.launch
 
 class RegisterViewModel(
 
     private val authService: AuthService,
 
     ): ViewModel() {
+
+    private val _registerState = mutableStateOf<RegisterState>(RegisterState.Initial)
+    val registerState: State<RegisterState> = _registerState
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -27,20 +33,29 @@ class RegisterViewModel(
     private val _phoneNumber = MutableStateFlow("")
     val phoneNumber: StateFlow<String> = _phoneNumber
 
-    suspend fun register(
+
+    fun register(
         name: String,
         email: String,
         password: String,
         fullName: String,
-        phoneNumber: String
-    ): Response<RegisterResponse>
+        phoneNumber: String)
     {
-        return authService.register(
-            name,
-            email,
-            password,
-            fullName,
-            phoneNumber)
+        viewModelScope.launch {
+            _registerState.value = RegisterState.Loading
+
+            try {
+                val response = authService.register(name, email, password, fullName, phoneNumber)
+                if (response.isSuccessful) {
+                    _registerState.value = RegisterState.Success
+                } else {
+                    _registerState.value = RegisterState.Error("Registration failed")
+                }
+            } catch (e: Exception) {
+                _registerState.value = RegisterState.Error("An error occurred")
+            }
+
+        }
     }
 
     fun updateName(newName: String) {

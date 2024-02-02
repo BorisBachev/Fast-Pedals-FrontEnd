@@ -1,0 +1,8 @@
+package com.example.fast_pedals_frontend.auth.login
+
+sealed class RegisterState {
+    object None : RegisterState()
+    object Loading : RegisterState()
+    object Success : RegisterState()
+    data class Error(val errorMessage: String) : RegisterState()
+}

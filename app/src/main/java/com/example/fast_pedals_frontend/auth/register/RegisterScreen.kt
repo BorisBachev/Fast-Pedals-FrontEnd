@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 fun RegisterScreen(
     registerViewModel: RegisterViewModel,
     onBack: () -> Unit,
+    onRegister: () -> Unit,
     onRegisterComplete: () -> Unit)
 {
 
@@ -40,6 +41,8 @@ fun RegisterScreen(
     val fullName by registerViewModel.fullName.collectAsState()
     val phoneNumber by registerViewModel.phoneNumber.collectAsState()
     var passwordVisibility by remember { mutableStateOf(false) }
+
+    val registerState by registerViewModel.registerState
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -134,13 +137,8 @@ fun RegisterScreen(
                     onClick = {
                         scope.launch {
 
-                            val response = registerViewModel.register(name, email, password, fullName, phoneNumber)
-                            if (response.isSuccessful) {
+                            onRegister()
 
-                                onRegisterComplete()
-                            } else {
-                                snackbarHostState.showSnackbar("Registration failed")
-                            }
                         }
                     },
                     modifier = Modifier
@@ -152,4 +150,18 @@ fun RegisterScreen(
             }
         }
     )
+    LaunchedEffect(registerState) {
+        when (val state = registerState) {
+            is RegisterState.Success -> {
+                onRegisterComplete()
+            }
+            is RegisterState.Error -> {
+                snackbarHostState.showSnackbar(state.errorMessage)
+            }
+            RegisterState.Loading -> {
+            }
+            RegisterState.Initial -> {
+            }
+        }
+    }
 }

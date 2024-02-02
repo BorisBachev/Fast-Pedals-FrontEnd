@@ -22,7 +22,7 @@ class AuthServiceImpl(
         val request = RegisterRequest(name, email, password, fullName, phoneNumber)
         val registerResponse = authApi.register(request)
         if (registerResponse.isSuccessful) {
-            authPreferences.saveJwtToken(registerResponse.body()!!.token)
+            authPreferences.saveJwtToken(registerResponse.body()!!.jwt)
         }
         return registerResponse
     }
@@ -31,7 +31,7 @@ class AuthServiceImpl(
         val request = LoginRequest(email, password)
         val loginResponse = authApi.login(request)
         if (loginResponse.isSuccessful) {
-            authPreferences.saveJwtToken(loginResponse.body()!!.token)
+            authPreferences.saveJwtToken(loginResponse.body()!!.jwt)
         }
         return loginResponse
     }
