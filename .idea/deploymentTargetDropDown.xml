@@ -5,6 +5,22 @@
       <entry key="GreetingPreview">
         <State />
       </entry>
+      <entry key="ListingBoxPreview">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\yb\.android\avd\Medium_Phone_API_30.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-02-03T16:42:51.769326700Z" />
+        </State>
+      </entry>
       <entry key="RegisterScreenPreview">
         <State />
       </entry>

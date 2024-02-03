@@ -9,6 +9,8 @@ import com.example.fast_pedals_frontend.auth.login.LoginScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterScreen
 import com.example.fast_pedals_frontend.auth.WelcomeScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
+import com.example.fast_pedals_frontend.listing.ListingScreen
+import com.example.fast_pedals_frontend.listing.ListingViewModel
 import com.example.fast_pedals_frontend.search.SearchScreen
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -19,12 +21,13 @@ fun NavigationHost(navController: NavHostController) {
     val loginViewModel: LogInViewModel = koinViewModel()
     val registerViewModel: RegisterViewModel = koinViewModel()
     val searchViewModel: SearchViewModel = koinViewModel()
+    val listingViewModel: ListingViewModel = koinViewModel()
 
     NavHost(navController, startDestination = NavDestinations.WELCOME) {
         composable(NavDestinations.WELCOME) {
             WelcomeScreen(
                 toRegister = { navController.navigate(NavDestinations.REGISTER) },
-                toLogin = { navController.navigate(NavDestinations.LOGIN) }
+                toLogin = { navController.navigate(NavDestinations.LISTING) }
             )
         }
         composable(NavDestinations.REGISTER) {
@@ -38,7 +41,14 @@ fun NavigationHost(navController: NavHostController) {
             LoginScreen(
                 loginViewModel = loginViewModel,
                 onBack = { navController.navigate(NavDestinations.WELCOME) },
-                onLoginComplete = { navController.navigate(NavDestinations.SEARCH) }
+                onLoginComplete = { navController.navigate(NavDestinations.LISTING) }
+            )
+        }
+        composable(NavDestinations.LISTING) {
+            ListingScreen(
+                listingViewModel = listingViewModel,
+                onNavigateToSearch = { navController.navigate(NavDestinations.SEARCH) },
+                onNavigateToProfile = { navController.navigate(NavDestinations.SEARCH) }
             )
         }
         composable(NavDestinations.SEARCH) {

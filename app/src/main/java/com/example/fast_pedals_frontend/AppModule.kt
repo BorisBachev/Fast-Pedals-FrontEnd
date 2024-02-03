@@ -9,6 +9,9 @@ import com.example.fast_pedals_frontend.auth.AuthServiceImpl
 import com.example.fast_pedals_frontend.auth.login.LogInViewModel
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
 import com.example.fast_pedals_frontend.listing.ListingApi
+import com.example.fast_pedals_frontend.listing.ListingService
+import com.example.fast_pedals_frontend.listing.ListingServiceImpl
+import com.example.fast_pedals_frontend.listing.ListingViewModel
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -53,6 +56,9 @@ val appModule = module {
     single<AuthService> {
         AuthServiceImpl(get(named("AuthApi")), get())
     }
+    single<ListingService> {
+        ListingServiceImpl(get(named("ListingApi")))
+    }
     viewModel {
         LogInViewModel(get<AuthService>())
     }
@@ -61,6 +67,9 @@ val appModule = module {
     }
     viewModel {
         SearchViewModel()
+    }
+    viewModel {
+        ListingViewModel(get())
     }
 
 }
