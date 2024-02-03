@@ -5,8 +5,8 @@ import retrofit2.Response
 
 class ListingServiceImpl(
     private val listingApi: ListingApi
-) {
-    suspend fun getListings(): Response<ListingResponse> {
-        return listingApi.getListings()
+): ListingService {
+    override suspend fun getPreviews(): Response<List<ListingResponse>> {
+        return listingApi.getPreviews()
     }
 }
