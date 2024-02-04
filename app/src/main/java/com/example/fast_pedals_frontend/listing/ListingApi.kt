@@ -8,7 +8,7 @@ import retrofit2.http.POST
 
 interface ListingApi {
 
-    @GET(AuthDestinations.REGISTER)
+    @GET(ListingDestinations.PREVIEW)
     suspend fun getPreviews(
     ): Response<List<ListingResponse>>
 

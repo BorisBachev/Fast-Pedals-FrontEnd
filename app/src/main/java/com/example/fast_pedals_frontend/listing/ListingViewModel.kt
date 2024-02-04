@@ -4,6 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ListingViewModel(
@@ -13,16 +15,19 @@ class ListingViewModel(
     private val _listingState = mutableStateOf<ListingState>(ListingState.None)
     val listingState: State<ListingState> = _listingState
 
-    fun getPreviews(callback: (List<ListingResponse>?) -> Unit) {
+    private val _previews = MutableStateFlow<List<ListingResponse>?>(null)
+    val previews: StateFlow<List<ListingResponse>?> = _previews
+
+    fun getPreviews() {
         viewModelScope.launch {
             _listingState.value = ListingState.Loading
             val response = listingService.getPreviews()
             if (response.isSuccessful) {
                 _listingState.value = ListingState.Success
-                callback(response.body())
+                 _previews.value = response.body()
             } else {
                 _listingState.value = ListingState.Error("An error occurred")
-                callback(null)
+                _previews.value = null
             }
         }
 
