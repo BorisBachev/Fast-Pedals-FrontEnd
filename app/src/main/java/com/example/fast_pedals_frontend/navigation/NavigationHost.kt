@@ -27,7 +27,7 @@ fun NavigationHost(navController: NavHostController) {
         composable(NavDestinations.WELCOME) {
             WelcomeScreen(
                 toRegister = { navController.navigate(NavDestinations.REGISTER) },
-                toLogin = { navController.navigate(NavDestinations.LISTING) }
+                toLogin = { navController.navigate(NavDestinations.LOGIN) }
             )
         }
         composable(NavDestinations.REGISTER) {

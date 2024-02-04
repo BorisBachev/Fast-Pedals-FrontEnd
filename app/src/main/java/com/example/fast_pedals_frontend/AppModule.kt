@@ -1,18 +1,16 @@
 package com.example.fast_pedals_frontend
 
 import com.example.fast_pedals_frontend.RetrofitHost.EMULATOR
-import com.example.fast_pedals_frontend.RetrofitHost.PHONE
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.auth.AuthApi
 import com.example.fast_pedals_frontend.auth.AuthService
 import com.example.fast_pedals_frontend.auth.AuthServiceImpl
 import com.example.fast_pedals_frontend.auth.login.LogInViewModel
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
-import com.example.fast_pedals_frontend.listing.ListingApi
-import com.example.fast_pedals_frontend.listing.ListingService
-import com.example.fast_pedals_frontend.listing.ListingServiceImpl
+import com.example.fast_pedals_frontend.listing.api.ListingApi
+import com.example.fast_pedals_frontend.listing.api.ListingService
+import com.example.fast_pedals_frontend.listing.api.ListingServiceImpl
 import com.example.fast_pedals_frontend.listing.ListingViewModel
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
