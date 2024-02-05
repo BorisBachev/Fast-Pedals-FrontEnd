@@ -23,7 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Money
-import androidx.compose.material.icons.filled.TwoWheeler
+import androidx.compose.material.icons.filled.DirectionsBike
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,7 +72,10 @@ fun BikeScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Bike Listing") },
+                title = { Text(
+                    text = listing?.title ?: "",
+                    style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
+                ) },
                 navigationIcon = {
                     IconButton(onClick = { onBack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
@@ -92,10 +95,8 @@ fun BikeScreen(
                     R.drawable.cruz
                 )
 
-                // Image Gallery
                 SwipeableImageGallery(imageResources = imageResources)
 
-                // Other Details
                 LazyColumn(
                     state = rememberLazyListState(),
                     modifier = Modifier
@@ -103,8 +104,11 @@ fun BikeScreen(
                         .padding(top = 8.dp)
                 ) {
                     item {
+
+                        val bikeInfo = "${bike?.brand ?: ""} ${bike?.model ?: ""}"
+
                         Text(
-                            text = listing?.title ?: "",
+                            text = bikeInfo,
                             style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
                             modifier = Modifier.padding(8.dp)
                         )
@@ -168,7 +172,7 @@ fun DetailsBox(bike: BikeResponse) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(8.dp)
             ) {
-                Icon(Icons.Default.TwoWheeler, contentDescription = null)
+                Icon(Icons.Default.DirectionsBike, contentDescription = null)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Bike Details",
@@ -176,8 +180,6 @@ fun DetailsBox(bike: BikeResponse) {
                 )
             }
 
-            BikeDetailItem("Brand", (bike?.brand ?: "").toString())
-            BikeDetailItem("Model", bike?.model ?: "")
             BikeDetailItem("Type", (bike?.type ?: "").toString())
             BikeDetailItem("Size", bike?.size ?: "")
             BikeDetailItem("Wheel Size", (bike?.wheelSize ?: "").toString())
