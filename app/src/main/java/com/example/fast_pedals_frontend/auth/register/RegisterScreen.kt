@@ -1,36 +1,47 @@
-package com.example.fast_pedals_frontend.auth
+package com.example.fast_pedals_frontend.auth.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.navigation.NavController
-import com.example.fast_pedals_frontend.Greeting
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplete: () -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var fullName by remember { mutableStateOf("") }
-    var phoneNumber by remember { mutableStateOf("") }
+fun RegisterScreen(
+    registerViewModel: RegisterViewModel,
+    onBack: () -> Unit,
+    onRegisterComplete: () -> Unit)
+{
+
+    val name by registerViewModel.name.collectAsState()
+    val email by registerViewModel.email.collectAsState()
+    val password by registerViewModel.password.collectAsState()
+    val fullName by registerViewModel.fullName.collectAsState()
+    val phoneNumber by registerViewModel.phoneNumber.collectAsState()
     var passwordVisibility by remember { mutableStateOf(false) }
+
+    val registerState by registerViewModel.registerState
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -41,7 +52,7 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
             TopAppBar(
                 title = { Text("Register") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle navigation back if needed */ }) {
+                    IconButton(onClick = { onBack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 }
@@ -57,7 +68,7 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
             ) {
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { registerViewModel.updateName(it) },
                     label = { Text("Username") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -65,7 +76,7 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
                 )
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { registerViewModel.updateEmail(it) },
                     label = { Text("Email") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Email,
@@ -77,7 +88,7 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
                 )
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { registerViewModel.updatePassword(it) },
                     label = { Text("Password") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
@@ -100,7 +111,7 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
                 )
                 OutlinedTextField(
                     value = fullName,
-                    onValueChange = { fullName = it },
+                    onValueChange = { registerViewModel.updateFullName(it) },
                     label = { Text("Full Name") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next
@@ -111,7 +122,7 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
                 )
                 OutlinedTextField(
                     value = phoneNumber,
-                    onValueChange = { phoneNumber = it },
+                    onValueChange = { registerViewModel.updatePhoneNumber(it) },
                     label = { Text("Phone Number") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Phone,
@@ -123,17 +134,10 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
                 )
                 Button(
                     onClick = {
-                        scope.launch {
-                            onRegisterComplete()
 
-                            val response = authViewModel.register(name, email, password, fullName, phoneNumber)
-                            if (response.isSuccessful) {
+                        registerViewModel.register(name, email, password, fullName, phoneNumber)
+                        onRegisterComplete()
 
-                                onRegisterComplete()
-                            } else {
-                                snackbarHostState.showSnackbar("Registration failed")
-                            }
-                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -144,11 +148,18 @@ fun RegisterScreen(authViewModel: AuthViewModel = viewModel(), onRegisterComplet
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RegisterScreenPreview() {
-    val authViewModel = AuthViewModel() // Initialize your ViewModel here
-    RegisterScreen(authViewModel = authViewModel, onRegisterComplete = {})
+    LaunchedEffect(registerState) {
+        when (val state = registerState) {
+            is RegisterState.Success -> {
+                onRegisterComplete()
+            }
+            is RegisterState.Error -> {
+                snackbarHostState.showSnackbar(state.errorMessage)
+            }
+            RegisterState.Loading -> {
+            }
+            RegisterState.None -> {
+            }
+        }
+    }
 }
