@@ -43,4 +43,22 @@ class BikeViewModel(
 
     }
 
+    fun getListing(listingId: Long) {
+
+        viewModelScope.launch {
+
+            _bikeState.value = BikeState.Loading
+
+            try {
+                val response = bikeService.getListing(listingId)
+                _listing.value = response
+                _bikeState.value = BikeState.Success
+            } catch (e: Exception) {
+                _bikeState.value = BikeState.Error("An error occurred")
+            }
+
+        }
+
+    }
+
 }

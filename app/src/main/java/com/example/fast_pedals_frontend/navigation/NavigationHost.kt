@@ -13,6 +13,12 @@ import com.example.fast_pedals_frontend.bike.BikeScreen
 import com.example.fast_pedals_frontend.bike.BikeViewModel
 import com.example.fast_pedals_frontend.listing.ListingScreen
 import com.example.fast_pedals_frontend.listing.ListingViewModel
+import com.example.fast_pedals_frontend.navigation.NavDestinations.BIKE
+import com.example.fast_pedals_frontend.navigation.NavDestinations.LISTING
+import com.example.fast_pedals_frontend.navigation.NavDestinations.LOGIN
+import com.example.fast_pedals_frontend.navigation.NavDestinations.REGISTER
+import com.example.fast_pedals_frontend.navigation.NavDestinations.SEARCH
+import com.example.fast_pedals_frontend.navigation.NavDestinations.WELCOME
 import com.example.fast_pedals_frontend.search.SearchScreen
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -26,47 +32,53 @@ fun NavigationHost(navController: NavHostController) {
     val listingViewModel: ListingViewModel = koinViewModel()
     val bikeViewModel: BikeViewModel = koinViewModel()
 
-    NavHost(navController, startDestination = NavDestinations.WELCOME) {
-        composable(NavDestinations.WELCOME) {
+    NavHost(navController, startDestination = WELCOME) {
+        composable(WELCOME) {
             WelcomeScreen(
-                toRegister = { navController.navigate(NavDestinations.REGISTER) },
-                toLogin = { navController.navigate(NavDestinations.LOGIN) }
+                toRegister = { navController.navigate(REGISTER) },
+                toLogin = { navController.navigate(LOGIN) }
             )
         }
-        composable(NavDestinations.REGISTER) {
+        composable(REGISTER) {
             RegisterScreen(
                 registerViewModel = registerViewModel,
-                onBack = { navController.navigate(NavDestinations.WELCOME) },
-                onRegisterComplete = { navController.navigate(NavDestinations.SEARCH) }
+                onBack = { navController.navigate(WELCOME) },
+                onRegisterComplete = { navController.navigate(SEARCH) }
             )
         }
-        composable(NavDestinations.LOGIN) {
+        composable(LOGIN) {
             LoginScreen(
                 loginViewModel = loginViewModel,
-                onBack = { navController.navigate(NavDestinations.WELCOME) },
-                onLoginComplete = { navController.navigate(NavDestinations.LISTING) }
+                onBack = { navController.navigate(WELCOME) },
+                onLoginComplete = { navController.navigate(LISTING) }
             )
         }
-        composable(NavDestinations.LISTING) {
+        composable(LISTING) {
             ListingScreen(
                 listingViewModel = listingViewModel,
-                onNavigateToSearch = { navController.navigate(NavDestinations.SEARCH) },
-                onNavigateToProfile = { navController.navigate(NavDestinations.BIKE) },
-                onClick = { navController.navigate(NavDestinations.BIKE) }
+                onNavigateToSearch = { navController.navigate(SEARCH) },
+                onNavigateToProfile = { navController.navigate(BIKE) },
+                onClick = { listingId ->
+                    navController.navigate(BIKE + "/$listingId") }
             )
         }
-        composable(NavDestinations.SEARCH) {
+        composable(SEARCH) {
             SearchScreen(
                 searchViewModel = searchViewModel,
-                onBack = { navController.navigate(NavDestinations.WELCOME) },
-                onSearch = { navController.navigate(NavDestinations.WELCOME) }
+                onBack = { navController.navigate(WELCOME) },
+                onSearch = { navController.navigate(WELCOME) }
             )
         }
-        composable(NavDestinations.BIKE) {
-            BikeScreen(
-                bikeViewModel = bikeViewModel,
-                onBack = { navController.navigate(NavDestinations.LISTING) }
-            )
+        composable(BIKE + "/{listingId}") { backStackEntry ->
+            val listingId = backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
+
+            listingId?.let {
+                BikeScreen(
+                    bikeViewModel = bikeViewModel,
+                    listingId = it,
+                    onBack = { navController.navigate(LISTING) }
+                )
+            }
         }
     }
 }

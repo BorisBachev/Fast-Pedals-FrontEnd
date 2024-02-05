@@ -1,7 +1,7 @@
 package com.example.fast_pedals_frontend.bike.api
 
-import com.example.fast_pedals_frontend.bike.BikeBrand
-import com.example.fast_pedals_frontend.bike.BikeType
+import com.example.fast_pedals_frontend.bike.enums.BikeBrand
+import com.example.fast_pedals_frontend.bike.enums.BikeType
 
 data class BikeResponse (
     val id: Long,

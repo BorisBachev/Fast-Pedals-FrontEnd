@@ -44,7 +44,7 @@ val appModule = module {
             .addInterceptor(httpInterceptor)
 
         Retrofit.Builder()
-            .baseUrl(EMULATOR)
+            .baseUrl(PHONE)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClientBuilder.build())
             .build()

@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import com.example.fast_pedals_frontend.R
+import com.example.fast_pedals_frontend.listing.api.ListingState
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @Composable
@@ -23,13 +24,14 @@ fun ListingScreen(
 
     listingViewModel.getPreviews()
 
+
     val imagePainter = painterResource(id = R.drawable.cruz)
 
     FastPedalsFrontEndTheme {
         LazyColumn {
             items(previews.orEmpty()) { listing ->
                 ListingBox(listing = listing, imagePainter = imagePainter, onClick = {
-                    onClick(listing.bikeId)
+                    onClick(listing.id)
                 })
             }
         }

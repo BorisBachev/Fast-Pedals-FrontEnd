@@ -1,4 +1,4 @@
-package com.example.fast_pedals_frontend.bike
+package com.example.fast_pedals_frontend.bike.enums
 
 enum class BikeBrand {
 
