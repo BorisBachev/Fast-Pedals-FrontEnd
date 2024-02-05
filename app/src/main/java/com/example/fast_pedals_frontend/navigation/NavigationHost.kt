@@ -9,6 +9,8 @@ import com.example.fast_pedals_frontend.auth.login.LoginScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterScreen
 import com.example.fast_pedals_frontend.auth.WelcomeScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
+import com.example.fast_pedals_frontend.bike.BikeScreen
+import com.example.fast_pedals_frontend.bike.BikeViewModel
 import com.example.fast_pedals_frontend.listing.ListingScreen
 import com.example.fast_pedals_frontend.listing.ListingViewModel
 import com.example.fast_pedals_frontend.search.SearchScreen
@@ -22,6 +24,7 @@ fun NavigationHost(navController: NavHostController) {
     val registerViewModel: RegisterViewModel = koinViewModel()
     val searchViewModel: SearchViewModel = koinViewModel()
     val listingViewModel: ListingViewModel = koinViewModel()
+    val bikeViewModel: BikeViewModel = koinViewModel()
 
     NavHost(navController, startDestination = NavDestinations.WELCOME) {
         composable(NavDestinations.WELCOME) {
@@ -48,7 +51,8 @@ fun NavigationHost(navController: NavHostController) {
             ListingScreen(
                 listingViewModel = listingViewModel,
                 onNavigateToSearch = { navController.navigate(NavDestinations.SEARCH) },
-                onNavigateToProfile = { navController.navigate(NavDestinations.SEARCH) }
+                onNavigateToProfile = { navController.navigate(NavDestinations.BIKE) },
+                onClick = { navController.navigate(NavDestinations.BIKE) }
             )
         }
         composable(NavDestinations.SEARCH) {
@@ -56,6 +60,12 @@ fun NavigationHost(navController: NavHostController) {
                 searchViewModel = searchViewModel,
                 onBack = { navController.navigate(NavDestinations.WELCOME) },
                 onSearch = { navController.navigate(NavDestinations.WELCOME) }
+            )
+        }
+        composable(NavDestinations.BIKE) {
+            BikeScreen(
+                bikeViewModel = bikeViewModel,
+                onBack = { navController.navigate(NavDestinations.LISTING) }
             )
         }
     }

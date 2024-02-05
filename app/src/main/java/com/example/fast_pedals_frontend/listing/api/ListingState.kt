@@ -1,4 +1,4 @@
-package com.example.fast_pedals_frontend.listing
+package com.example.fast_pedals_frontend.listing.api
 
 sealed class ListingState {
     object None : ListingState()

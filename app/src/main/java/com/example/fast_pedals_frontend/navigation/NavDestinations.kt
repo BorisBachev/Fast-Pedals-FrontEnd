@@ -6,4 +6,5 @@ object NavDestinations {
     const val LOGIN = "login"
     const val SEARCH = "search"
     const val LISTING = "listing"
+    const val BIKE = "bike"
 }
