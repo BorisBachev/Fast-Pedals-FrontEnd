@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,16 +13,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContactMail
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.DirectionsBike
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,7 +43,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -62,9 +62,11 @@ fun BikeScreen(
     val state by bikeViewModel.bikeState
     val listing by bikeViewModel.listing.collectAsState()
     val bike by bikeViewModel.bike.collectAsState()
+    val contactInfo by bikeViewModel.contactInfo.collectAsState()
 
     bikeViewModel.getListing(listingId)
     listing?.let { bikeViewModel.getBike(it.bikeId) }
+    listing?.let { bikeViewModel.getContactInfo(it.userId) }
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -130,6 +132,9 @@ fun BikeScreen(
                         DescriptionBox(description = listing?.description ?: "")
 
                         LocationBox(location = listing?.location ?: "")
+
+                        contactInfo?.let { ContactInfoBox(contactInfo = it) }
+
                     }
                 }
             }
@@ -180,10 +185,10 @@ fun DetailsBox(bike: BikeResponse) {
                 )
             }
 
-            BikeDetailItem("Type", (bike?.type ?: "").toString())
-            BikeDetailItem("Size", bike?.size ?: "")
-            BikeDetailItem("Wheel Size", (bike?.wheelSize ?: "").toString())
-            BikeDetailItem("Frame Material", bike?.frameMaterial ?: "")
+            BikeDetailItem("Type", bike.type.toString())
+            BikeDetailItem("Size", bike.size)
+            BikeDetailItem("Wheel Size", bike.wheelSize.toString())
+            BikeDetailItem("Frame Material", bike.frameMaterial)
         }
     }
 }
@@ -258,6 +263,53 @@ fun LocationBox(location: String) {
                 Icon(Icons.Default.LocationOn, contentDescription = null)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = location)
+            }
+        }
+    }
+}
+
+@Composable
+fun ContactInfoBox(contactInfo: ContactInfo) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
+            .clip(RoundedCornerShape(8.dp))
+    ) {
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Icon(Icons.Default.ContactMail, contentDescription = null)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Contact Information",
+                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                Icon(Icons.Default.Person, contentDescription = null)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = contactInfo.name)
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                Icon(Icons.Default.Phone, contentDescription = null)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = contactInfo.phoneNumber)
             }
         }
     }

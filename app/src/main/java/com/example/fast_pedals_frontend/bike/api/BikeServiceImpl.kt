@@ -1,5 +1,6 @@
 package com.example.fast_pedals_frontend.bike.api
 
+import com.example.fast_pedals_frontend.bike.ContactInfo
 import com.example.fast_pedals_frontend.listing.ListingResponse
 
 class BikeServiceImpl(
@@ -12,6 +13,10 @@ class BikeServiceImpl(
 
     override suspend fun getListing(listingId: Long): ListingResponse {
         return bikeApi.getListing(listingId)
+    }
+
+    override suspend fun getContactInfo(userId: Long): ContactInfo {
+        return bikeApi.getContactInfo(userId)
     }
 
 }

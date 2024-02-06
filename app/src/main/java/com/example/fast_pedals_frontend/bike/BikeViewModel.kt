@@ -25,6 +25,9 @@ class BikeViewModel(
     private val _bike = MutableStateFlow<BikeResponse?>(null)
     val bike: StateFlow<BikeResponse?> = _bike
 
+    private val _contactInfo = MutableStateFlow<ContactInfo?>(null)
+    val contactInfo: StateFlow<ContactInfo?> = _contactInfo
+
     fun getBike(bikeId: Long) {
 
         viewModelScope.launch {
@@ -52,6 +55,24 @@ class BikeViewModel(
             try {
                 val response = bikeService.getListing(listingId)
                 _listing.value = response
+                _bikeState.value = BikeState.Success
+            } catch (e: Exception) {
+                _bikeState.value = BikeState.Error("An error occurred")
+            }
+
+        }
+
+    }
+
+    fun getContactInfo(userId: Long) {
+
+        viewModelScope.launch {
+
+            _bikeState.value = BikeState.Loading
+
+            try {
+                val response = bikeService.getContactInfo(userId)
+                _contactInfo.value = response
                 _bikeState.value = BikeState.Success
             } catch (e: Exception) {
                 _bikeState.value = BikeState.Error("An error occurred")

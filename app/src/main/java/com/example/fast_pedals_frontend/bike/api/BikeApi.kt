@@ -1,6 +1,8 @@
 package com.example.fast_pedals_frontend.bike.api
 
+import com.example.fast_pedals_frontend.bike.ContactInfo
 import com.example.fast_pedals_frontend.bike.api.BikeDestination.BIKE
+import com.example.fast_pedals_frontend.bike.api.BikeDestination.CONTACT_INFO
 import com.example.fast_pedals_frontend.bike.api.BikeDestination.LISTING
 import com.example.fast_pedals_frontend.listing.ListingResponse
 import retrofit2.http.GET
@@ -17,5 +19,10 @@ interface BikeApi {
     suspend fun getListing(
         @Path("listingId") listingId: Long
     ): ListingResponse
+
+    @GET(CONTACT_INFO)
+    suspend fun getContactInfo(
+        @Path("userId") userId: Long
+    ): ContactInfo
 
 }
