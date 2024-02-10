@@ -1,48 +1,30 @@
 package com.example.fast_pedals_frontend.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SearchViewModel(): ViewModel() {
+class SearchViewModel(
+): ViewModel() {
 
-    private val _searchCriteria = MutableStateFlow(SearchCriteria())
-    val searchCriteria: StateFlow<SearchCriteria> get() = _searchCriteria
+    private val _searchState = MutableStateFlow<SearchState>(SearchState.Empty)
+    val searchState: StateFlow<SearchState> = _searchState
 
-    fun updateSearchCriteria(newSearchCriteria: SearchCriteria) {
-        _searchCriteria.value = newSearchCriteria
+    private val _isTypeDropdownExpanded = MutableStateFlow(false)
+    val isTypeDropdownExpanded: StateFlow<Boolean> = _isTypeDropdownExpanded
+
+    private val _isBrandDropdownExpanded = MutableStateFlow(false)
+    val isBrandDropdownExpanded: StateFlow<Boolean> = _isBrandDropdownExpanded
+
+    fun toggleTypeDropdown() {
+        _isTypeDropdownExpanded.value = !_isTypeDropdownExpanded.value
+        Log.d("SearchViewModel", "Type dropdown expanded: ${_isTypeDropdownExpanded.value}")
     }
 
-    fun updateTitle(title: String) {
-        _searchCriteria.value = _searchCriteria.value.copy(title = title)
-    }
-
-    fun updateMinPrice(minPrice: Int) {
-        _searchCriteria.value = _searchCriteria.value.copy(minPrice = minPrice)
-    }
-
-    fun updateMaxPrice(maxPrice: Int) {
-        _searchCriteria.value = _searchCriteria.value.copy(maxPrice = maxPrice)
-    }
-
-    fun updateLocation(location: String) {
-        _searchCriteria.value = _searchCriteria.value.copy(location = location)
-    }
-
-    fun updateDescription(description: String) {
-        _searchCriteria.value = _searchCriteria.value.copy(description = description)
-    }
-
-    fun updateType(type: String) {
-        _searchCriteria.value = searchCriteria.value.copy(type = type)
-    }
-
-    fun updateBrand(brand: String) {
-        _searchCriteria.value = searchCriteria.value.copy(brand = brand)
-    }
-
-    fun search(): SearchResponse {
-        return SearchResponse("OK")
+    fun toggleBrandDropdown() {
+        _isBrandDropdownExpanded.value = !_isBrandDropdownExpanded.value
+        Log.d("SearchViewModel", "Brand dropdown expanded: ${_isBrandDropdownExpanded.value}")
     }
 
 }
