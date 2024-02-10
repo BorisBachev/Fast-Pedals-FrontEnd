@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class SharedCriteriaViewModel(): ViewModel() {
 
-    private val _searchCriteria = MutableStateFlow(SearchCriteria("", 0.0, 1000.0, "", "",
+    private val _searchCriteria = MutableStateFlow(SearchCriteria("", 0.0, 10000.0, "", "",
         BikeType.ALL, BikeBrand.ALL, "", "", wheelSize = null, ""))
     val searchCriteria: StateFlow<SearchCriteria> get() = _searchCriteria
 
@@ -52,7 +52,7 @@ class SharedCriteriaViewModel(): ViewModel() {
         _searchCriteria.value = searchCriteria.value.copy(size = size)
     }
 
-    fun updateWheelSize(wheelSize: Int) {
+    fun updateWheelSize(wheelSize: Int?) {
         _searchCriteria.value = searchCriteria.value.copy(wheelSize = wheelSize)
     }
 

@@ -233,7 +233,11 @@ fun SearchScreen(
                                 value = if (searchCriteria.wheelSize != null) searchCriteria.wheelSize.toString() else "",
                                 onValueChange = { newValue ->
                                     val newSize = newValue.toIntOrNull()
-                                    newSize?.let { sharedCriteriaViewModel.updateWheelSize(it) }
+                                    if (!newValue.isNullOrEmpty()) {
+                                        newSize?.let { sharedCriteriaViewModel.updateWheelSize(it) }
+                                    } else {
+                                        sharedCriteriaViewModel.updateWheelSize(null)
+                                    }
                                 },
                                 label = { Text("Wheel Size") },
                                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -265,7 +269,7 @@ fun SearchScreen(
                                     sharedCriteriaViewModel.updateMinPrice(range.start.toDouble())
                                     sharedCriteriaViewModel.updateMaxPrice(range.endInclusive.toDouble())
                                 },
-                                valueRange = 0f..1000f,
+                                valueRange = 0f..10000f,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)

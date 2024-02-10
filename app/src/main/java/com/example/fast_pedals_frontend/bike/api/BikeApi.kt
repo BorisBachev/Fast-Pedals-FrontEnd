@@ -1,12 +1,12 @@
 package com.example.fast_pedals_frontend.bike.api
 
 import com.example.fast_pedals_frontend.bike.ContactInfo
-import com.example.fast_pedals_frontend.bike.api.BikeDestination.BIKE
-import com.example.fast_pedals_frontend.bike.api.BikeDestination.CONTACT_INFO
-import com.example.fast_pedals_frontend.bike.api.BikeDestination.FAVOURITE
-import com.example.fast_pedals_frontend.bike.api.BikeDestination.FAVOURITE_CHECK
-import com.example.fast_pedals_frontend.bike.api.BikeDestination.FAVOURITE_DELETE
-import com.example.fast_pedals_frontend.bike.api.BikeDestination.LISTING
+import com.example.fast_pedals_frontend.bike.api.BikeDestinations.BIKE
+import com.example.fast_pedals_frontend.bike.api.BikeDestinations.CONTACT_INFO
+import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE
+import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE_CHECK
+import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE_DELETE
+import com.example.fast_pedals_frontend.bike.api.BikeDestinations.LISTING
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import retrofit2.Response
 import retrofit2.http.Body
