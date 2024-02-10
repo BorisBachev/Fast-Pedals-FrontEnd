@@ -4,6 +4,7 @@ import com.example.fast_pedals_frontend.bike.enums.BikeBrand
 import com.example.fast_pedals_frontend.bike.enums.BikeType
 
 data class BikeResponse (
+
     val id: Long,
     val type: BikeType,
     val brand: BikeBrand,
@@ -11,4 +12,5 @@ data class BikeResponse (
     val size: String,
     val wheelSize: Int,
     val frameMaterial: String
+
 )

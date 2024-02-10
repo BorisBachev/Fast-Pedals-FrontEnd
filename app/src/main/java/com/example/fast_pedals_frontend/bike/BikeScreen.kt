@@ -18,11 +18,13 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.DirectionsBike
 import androidx.compose.material.icons.filled.ContactMail
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Money
-import androidx.compose.material.icons.filled.DirectionsBike
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.outlined.Info
@@ -43,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fast_pedals_frontend.R
 import com.example.fast_pedals_frontend.bike.api.BikeResponse
+import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,78 +72,107 @@ fun BikeScreen(
     listing?.let { bikeViewModel.getBike(it.bikeId) }
     listing?.let { bikeViewModel.getContactInfo(it.userId) }
 
+    val isFavourite by bikeViewModel.isFavourite.collectAsState()
+
+    bikeViewModel.isFavourite(listingId)
+
+    val iconTint = if (isFavourite == true) Color.Red else Color.White
+
     val snackbarHostState = remember { SnackbarHostState() }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = { Text(
-                    text = listing?.title ?: "",
-                    style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
-                ) },
-                navigationIcon = {
-                    IconButton(onClick = { onBack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
-                    }
-                }
-            )
-        },
-        content = { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
-                val imageResources = listOf(
-                    R.drawable.cruz,
-                    R.drawable.cruz,
-                    R.drawable.cruz
-                )
-
-                SwipeableImageGallery(imageResources = imageResources)
-
-                LazyColumn(
-                    state = rememberLazyListState(),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 8.dp)
-                ) {
-                    item {
-
-                        val bikeInfo = "${bike?.brand ?: ""} ${bike?.model ?: ""}"
-
+    FastPedalsFrontEndTheme {
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                TopAppBar(
+                    title = {
                         Text(
-                            text = bikeInfo,
+                            text = listing?.title ?: "",
                             style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(8.dp)
                         )
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(8.dp)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { onBack() }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                if (isFavourite == true) {
+                                    bikeViewModel.unFavourite(listingId)
+                                } else {
+                                    bikeViewModel.favourite(listingId)
+                                }
+                                bikeViewModel.toggleFavourite()
+                            }
                         ) {
-                            Icon(Icons.Default.Money, contentDescription = null)
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${listing?.price} USD",
-                                style = TextStyle(fontSize = 16.sp),
+                            Icon(
+                                imageVector = if (isFavourite == true) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = null,
+                                tint = iconTint
                             )
                         }
+                    }
+                )
+            },
+            content = { padding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                ) {
+                    val imageResources = listOf(
+                        R.drawable.cruz,
+                        R.drawable.cruz,
+                        R.drawable.cruz
+                    )
 
-                        bike?.let { DetailsBox(bike = it) }
+                    SwipeableImageGallery(imageResources = imageResources)
 
-                        DescriptionBox(description = listing?.description ?: "")
+                    LazyColumn(
+                        state = rememberLazyListState(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 8.dp)
+                    ) {
+                        item {
 
-                        LocationBox(location = listing?.location ?: "")
+                            val bikeInfo = "${bike?.brand ?: ""} ${bike?.model ?: ""}"
 
-                        contactInfo?.let { ContactInfoBox(contactInfo = it) }
+                            Text(
+                                text = bikeInfo,
+                                style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
+                                modifier = Modifier.padding(8.dp)
+                            )
 
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Icon(Icons.Default.Money, contentDescription = null)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${listing?.price} USD",
+                                    style = TextStyle(fontSize = 16.sp),
+                                )
+                            }
+
+                            bike?.let { DetailsBox(bike = it) }
+
+                            DescriptionBox(description = listing?.description ?: "")
+
+                            LocationBox(location = listing?.location ?: "")
+
+                            contactInfo?.let { ContactInfoBox(contactInfo = it) }
+
+                        }
                     }
                 }
             }
-        }
-    )
+        )
+
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -177,7 +210,7 @@ fun DetailsBox(bike: BikeResponse) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(8.dp)
             ) {
-                Icon(Icons.Default.DirectionsBike, contentDescription = null)
+                Icon(Icons.AutoMirrored.Filled.DirectionsBike, contentDescription = null)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Bike Details",

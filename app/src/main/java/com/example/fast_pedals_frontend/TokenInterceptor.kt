@@ -7,6 +7,7 @@ import okhttp3.Response
 class TokenInterceptor(private val authSharedPreferences: AuthSharedPreferences) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
+
         val originalRequest: Request = chain.request()
 
         val isLoginOrRegistration = isLoginOrRegistrationRequest(originalRequest.url.toString())

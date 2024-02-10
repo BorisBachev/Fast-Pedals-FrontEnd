@@ -2,6 +2,7 @@ package com.example.fast_pedals_frontend.bike.enums
 
 enum class BikeBrand {
 
+    ALL,
     BIANCHI,
     BMC,
     CANNONDALE,

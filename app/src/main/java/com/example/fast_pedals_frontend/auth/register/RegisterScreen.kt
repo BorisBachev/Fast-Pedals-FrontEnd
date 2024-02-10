@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,108 +46,111 @@ fun RegisterScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = { Text("Register") },
-                navigationIcon = {
-                    IconButton(onClick = { onBack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+    FastPedalsFrontEndTheme {
+
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                TopAppBar(
+                    title = { Text("Register") },
+                    navigationIcon = {
+                        IconButton(onClick = { onBack() }) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = null)
+                        }
+                    }
+                )
+            },
+            content = { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { registerViewModel.updateName(it) },
+                        label = { Text("Username") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { registerViewModel.updateEmail(it) },
+                        label = { Text("Email") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { registerViewModel.updatePassword(it) },
+                        label = { Text("Password") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Next
+                        ),
+                        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { passwordVisibility = !passwordVisibility }
+                            ) {
+                                Icon(
+                                    if (passwordVisibility) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    OutlinedTextField(
+                        value = fullName,
+                        onValueChange = { registerViewModel.updateFullName(it) },
+                        label = { Text("Full Name") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    OutlinedTextField(
+                        value = phoneNumber,
+                        onValueChange = { registerViewModel.updatePhoneNumber(it) },
+                        label = { Text("Phone Number") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Phone,
+                            imeAction = ImeAction.Done
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    Button(
+                        onClick = {
+
+                            registerViewModel.register(name, email, password, fullName, phoneNumber)
+                            onRegisterComplete()
+
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Text("Register")
                     }
                 }
-            )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { registerViewModel.updateName(it) },
-                    label = { Text("Username") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { registerViewModel.updateEmail(it) },
-                    label = { Text("Email") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { registerViewModel.updatePassword(it) },
-                    label = { Text("Password") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
-                    ),
-                    visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = { passwordVisibility = !passwordVisibility }
-                        ) {
-                            Icon(
-                                if (passwordVisibility) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                OutlinedTextField(
-                    value = fullName,
-                    onValueChange = { registerViewModel.updateFullName(it) },
-                    label = { Text("Full Name") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                OutlinedTextField(
-                    value = phoneNumber,
-                    onValueChange = { registerViewModel.updatePhoneNumber(it) },
-                    label = { Text("Phone Number") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Phone,
-                        imeAction = ImeAction.Done
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                Button(
-                    onClick = {
-
-                        registerViewModel.register(name, email, password, fullName, phoneNumber)
-                        onRegisterComplete()
-
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Text("Register")
-                }
             }
-        }
-    )
+        )
+    }
     LaunchedEffect(registerState) {
         when (val state = registerState) {
             is RegisterState.Success -> {

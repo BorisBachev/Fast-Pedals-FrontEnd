@@ -2,6 +2,7 @@ package com.example.fast_pedals_frontend
 
 import com.example.fast_pedals_frontend.RetrofitHost.EMULATOR
 import com.example.fast_pedals_frontend.RetrofitHost.PHONE
+import com.example.fast_pedals_frontend.RetrofitHost.PHONE_OFFICE
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.auth.AuthApi
 import com.example.fast_pedals_frontend.auth.AuthService
@@ -16,6 +17,10 @@ import com.example.fast_pedals_frontend.listing.api.ListingApi
 import com.example.fast_pedals_frontend.listing.api.ListingService
 import com.example.fast_pedals_frontend.listing.api.ListingServiceImpl
 import com.example.fast_pedals_frontend.listing.ListingViewModel
+import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
+import com.example.fast_pedals_frontend.search.api.SearchApi
+import com.example.fast_pedals_frontend.search.api.SearchService
+import com.example.fast_pedals_frontend.search.api.SearchServiceImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -60,6 +65,9 @@ val appModule = module {
     single<BikeApi>(named("BikeApi")) {
         get<Retrofit>(named("Retrofit")).create(BikeApi::class.java)
     }
+    single<SearchApi>(named("SearchApi")) {
+        get<Retrofit>(named("Retrofit")).create(SearchApi::class.java)
+    }
 
 
     single<AuthService> {
@@ -70,6 +78,9 @@ val appModule = module {
     }
     single<BikeService> {
         BikeServiceImpl(get(named("BikeApi")))
+    }
+    single<SearchService> {
+        SearchServiceImpl(get(named("SearchApi")))
     }
 
 
@@ -83,10 +94,16 @@ val appModule = module {
         SearchViewModel()
     }
     viewModel {
-        ListingViewModel(get())
+        ListingViewModel(get<ListingService>(), get<SearchService>(), get<SharedCriteriaViewModel>())
     }
     viewModel {
         BikeViewModel(get())
+    }
+    viewModel {
+        SharedCriteriaViewModel()
+    }
+    viewModel {
+        SearchViewModel()
     }
 
 }

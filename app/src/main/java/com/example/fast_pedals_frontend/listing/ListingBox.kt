@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.fast_pedals_frontend.listing.api.ListingResponse
+import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @Composable
 fun ListingBox(
@@ -25,34 +27,36 @@ fun ListingBox(
     onClick: () -> Unit = {}
 ) {
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onClick() },
+    FastPedalsFrontEndTheme {
 
-        ) {
-        Column(
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Image(
-                painter = imagePainter,
-                contentDescription = "Cruz",
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clickable { onClick() },
+
+            ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(shape = RoundedCornerShape(4.dp)),
-                contentScale = ContentScale.Crop
-            )
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Image(
+                    painter = imagePainter,
+                    contentDescription = "Cruz",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(shape = RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Crop
+                )
 
-            Text(text = "Title: ${listing.title}", fontWeight = FontWeight.Bold)
-            Text(text = "Description: ${listing.description}")
-            Text(text = "Price: ${listing.price}")
-            Text(text = "Location: ${listing.location}")
+                Text(text = "Title: ${listing.title}", fontWeight = FontWeight.Bold)
+                Text(text = "Description: ${listing.description}")
+                Text(text = "Price: ${listing.price}")
+                Text(text = "Location: ${listing.location}")
 
+            }
         }
     }
-
 }

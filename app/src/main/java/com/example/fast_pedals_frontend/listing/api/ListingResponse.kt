@@ -1,4 +1,4 @@
-package com.example.fast_pedals_frontend.listing
+package com.example.fast_pedals_frontend.listing.api
 
 data class ListingResponse (
     val id: Long,
