@@ -1,5 +1,6 @@
-package com.example.fast_pedals_frontend.create
+package com.example.fast_pedals_frontend.edit
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,28 +42,34 @@ import com.example.fast_pedals_frontend.bike.enums.BikeBrand
 import com.example.fast_pedals_frontend.bike.enums.BikeType
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateScreen(
-    onCreate: (Long) -> Unit,
-    createViewModel: CreateViewModel
-) {
+fun EditScreen(
 
-    val createRequest by createViewModel.createRequest.collectAsState()
-    val listingId by createViewModel.listingId.collectAsState()
+    editViewModel: EditViewModel,
+    listingId: Long,
+    onEdit: (Long) -> Unit,
+    sharedEditViewModel: SharedEditViewModel
+
+    ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val isBrandDropdownExpanded by createViewModel.isBrandDropdownExpanded.collectAsState()
-    val isTypeDropdownExpanded by createViewModel.isTypeDropdownExpanded.collectAsState()
+    val isBrandDropdownExpanded by editViewModel.isBrandDropdownExpanded.collectAsState()
+    val isTypeDropdownExpanded by editViewModel.isTypeDropdownExpanded.collectAsState()
+
+    val editRequest by editViewModel.editRequest.collectAsState()
+
+    Log.d("EditScreen", "Edit request: $editRequest")
 
     FastPedalsFrontEndTheme {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 TopAppBar(
-                    title = { Text("Sell your old bike") }
+                    title = { Text("Edit your listing") }
                 )
             },
             content = { paddingValues ->
@@ -91,10 +98,10 @@ fun CreateScreen(
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.clickable(onClick = {
-                                            createViewModel.toggleBrandDropdown()
+                                            editViewModel.toggleBrandDropdown()
                                         })
                                     ) {
-                                        Text("Brand: ${createRequest.brand.name}")
+                                        Text("Brand: ${editRequest.brand.name}")
                                         Spacer(modifier = Modifier.weight(1f))
                                         Icon(
                                             Icons.Default.ArrowDropDown,
@@ -106,14 +113,14 @@ fun CreateScreen(
                                             .fillMaxWidth()
                                             .padding(8.dp),
                                         expanded = isBrandDropdownExpanded,
-                                        onDismissRequest = { createViewModel.toggleBrandDropdown() }
+                                        onDismissRequest = { editViewModel.toggleBrandDropdown() }
                                     ) {
                                         BikeBrand.entries.forEach { brand ->
                                             DropdownMenuItem(
                                                 text = { Text(brand.name) },
                                                 onClick = {
-                                                    createViewModel.updateBrand(brand)
-                                                    createViewModel.toggleBrandDropdown()
+                                                    sharedEditViewModel.updateBrand(brand)
+                                                    editViewModel.toggleBrandDropdown()
                                                 }
                                             )
                                         }
@@ -135,10 +142,10 @@ fun CreateScreen(
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.clickable(onClick = {
-                                            createViewModel.toggleTypeDropdown()
+                                            editViewModel.toggleTypeDropdown()
                                         })
                                     ) {
-                                        Text("Type: ${createRequest.type.name}")
+                                        Text("Type: ${editRequest.type.name}")
                                         Spacer(modifier = Modifier.weight(1f))
                                         Icon(
                                             Icons.Default.ArrowDropDown,
@@ -150,14 +157,14 @@ fun CreateScreen(
                                             .fillMaxWidth()
                                             .padding(8.dp),
                                         expanded = isTypeDropdownExpanded,
-                                        onDismissRequest = { createViewModel.toggleTypeDropdown() }
+                                        onDismissRequest = { editViewModel.toggleTypeDropdown() }
                                     ) {
                                         BikeType.entries.forEach { type ->
                                             DropdownMenuItem(
                                                 text = { Text(type.name) },
                                                 onClick = {
-                                                    createViewModel.updateType(type)
-                                                    createViewModel.toggleTypeDropdown()
+                                                    sharedEditViewModel.updateType(type)
+                                                    editViewModel.toggleTypeDropdown()
                                                 }
                                             )
                                         }
@@ -165,8 +172,8 @@ fun CreateScreen(
                                 }
                             }
                             OutlinedTextField(
-                                value = createRequest.title,
-                                onValueChange = { createViewModel.updateTitle(it) },
+                                value = editRequest.title,
+                                onValueChange = { sharedEditViewModel.updateTitle(it) },
                                 label = { Text("Listing Title") },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -174,8 +181,8 @@ fun CreateScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
-                                value = createRequest.location,
-                                onValueChange = { createViewModel.updateLocation(it) },
+                                value = editRequest.location,
+                                onValueChange = { sharedEditViewModel.updateLocation(it) },
                                 label = { Text("Location") },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Text,
@@ -187,8 +194,8 @@ fun CreateScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
-                                value = createRequest.description,
-                                onValueChange = { createViewModel.updateDescription(it) },
+                                value = editRequest.description,
+                                onValueChange = { sharedEditViewModel.updateDescription(it) },
                                 label = { Text("Description") },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Text,
@@ -200,8 +207,8 @@ fun CreateScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
-                                value = createRequest.model,
-                                onValueChange = { createViewModel.updateModel(it) },
+                                value = editRequest.model,
+                                onValueChange = { sharedEditViewModel.updateModel(it) },
                                 label = { Text("Model") },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Text,
@@ -213,8 +220,8 @@ fun CreateScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
-                                value = createRequest.size,
-                                onValueChange = { createViewModel.updateSize(it) },
+                                value = editRequest.size,
+                                onValueChange = { sharedEditViewModel.updateSize(it) },
                                 label = { Text("Size") },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Text,
@@ -226,13 +233,13 @@ fun CreateScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
-                                value = if (createRequest.wheelSize != null) createRequest.wheelSize.toString() else "",
+                                value = if (editRequest.wheelSize != null) editRequest.wheelSize.toString() else "",
                                 onValueChange = { newValue ->
                                     val newSize = newValue.toIntOrNull()
                                     if (!newValue.isNullOrEmpty()) {
-                                        newSize?.let { createViewModel.updateWheelSize(it) }
+                                        newSize?.let { sharedEditViewModel.updateWheelSize(it) }
                                     } else {
-                                        createViewModel.updateWheelSize(null)
+                                        sharedEditViewModel.updateWheelSize(null)
                                     }
                                 },
                                 label = { Text("Wheel Size") },
@@ -246,8 +253,8 @@ fun CreateScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
-                                value = createRequest.frameMaterial,
-                                onValueChange = { createViewModel.updateFrameMaterial(it) },
+                                value = editRequest.frameMaterial,
+                                onValueChange = { sharedEditViewModel.updateFrameMaterial(it) },
                                 label = { Text("Frame Material") },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Text,
@@ -259,13 +266,13 @@ fun CreateScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
-                                value = createRequest.price?.toString() ?: "",
+                                value = editRequest.price?.toString() ?: "",
                                 onValueChange = { newValue ->
                                     if (newValue.isEmpty() || newValue == "0" || newValue == "0." || newValue == "0.0") {
-                                        createViewModel.updatePrice(null)
+                                        sharedEditViewModel.updatePrice(null)
                                     } else {
                                         val newPrice = newValue.toDoubleOrNull()
-                                        createViewModel.updatePrice(newPrice)
+                                        sharedEditViewModel.updatePrice(newPrice)
                                     }
                                 },
                                 label = { Text("Price") },
@@ -280,14 +287,14 @@ fun CreateScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = {
-                                    createViewModel.create()
-                                    listingId?.let { onCreate(it) }
+                                    editViewModel.edit()
+                                    onEdit(listingId)
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)
                             ) {
-                                Text("Create Listing")
+                                Text("Edit")
                             }
                         }
                     }

@@ -7,10 +7,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import com.example.fast_pedals_frontend.R
-import com.example.fast_pedals_frontend.bike.enums.BikeBrand
-import com.example.fast_pedals_frontend.bike.enums.BikeType
-import com.example.fast_pedals_frontend.listing.api.ListingState
-import com.example.fast_pedals_frontend.search.SearchCriteria
 import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 

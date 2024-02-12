@@ -8,4 +8,5 @@ object NavDestinations {
     const val LISTING = "listing"
     const val BIKE = "bike"
     const val CREATE = "create"
+    const val EDIT = "edit"
 }

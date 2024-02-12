@@ -1,12 +1,10 @@
 package com.example.fast_pedals_frontend.bike.api
 
-import android.util.Log
-import com.example.fast_pedals_frontend.AuthSharedPreferences
 import com.example.fast_pedals_frontend.bike.ContactInfo
+import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
+import com.example.fast_pedals_frontend.bike.api.response.UserResponse
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
-import org.json.JSONObject
 import retrofit2.Response
-import java.util.Base64
 
 class BikeServiceImpl(
     private val bikeApi: BikeApi
@@ -22,6 +20,10 @@ class BikeServiceImpl(
 
     override suspend fun getContactInfo(userId: Long): ContactInfo {
         return bikeApi.getContactInfo(userId)
+    }
+
+    override suspend fun getUser(): UserResponse {
+        return bikeApi.getUser()
     }
 
     override suspend fun favouriteCheck(listingId: Long): Response<Boolean> {
@@ -40,6 +42,10 @@ class BikeServiceImpl(
 
         return bikeApi.unFavourite(listingId)
 
+    }
+
+    override suspend fun deleteListing(listingId: Long): Response<Unit> {
+        return bikeApi.deleteListing(listingId)
     }
 
 }

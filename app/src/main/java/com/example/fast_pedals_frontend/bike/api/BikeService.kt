@@ -1,6 +1,8 @@
 package com.example.fast_pedals_frontend.bike.api
 
 import com.example.fast_pedals_frontend.bike.ContactInfo
+import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
+import com.example.fast_pedals_frontend.bike.api.response.UserResponse
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import retrofit2.Response
 
@@ -12,10 +14,14 @@ interface BikeService {
 
     suspend fun getContactInfo(userId: Long): ContactInfo
 
+    suspend fun getUser(): UserResponse
+
     suspend fun favouriteCheck(listingId: Long): Response<Boolean>
 
     suspend fun favourite(listingId: Long): Response<Unit>
 
     suspend fun unFavourite(listingId: Long): Response<Unit>
+
+    suspend fun deleteListing(listingId: Long): Response<Unit>
 
 }

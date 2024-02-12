@@ -1,6 +1,5 @@
 package com.example.fast_pedals_frontend.navigation
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -30,10 +29,14 @@ import com.example.fast_pedals_frontend.bike.BikeScreen
 import com.example.fast_pedals_frontend.bike.BikeViewModel
 import com.example.fast_pedals_frontend.create.CreateScreen
 import com.example.fast_pedals_frontend.create.CreateViewModel
+import com.example.fast_pedals_frontend.edit.EditScreen
+import com.example.fast_pedals_frontend.edit.EditViewModel
+import com.example.fast_pedals_frontend.edit.SharedEditViewModel
 import com.example.fast_pedals_frontend.listing.ListingScreen
 import com.example.fast_pedals_frontend.listing.ListingViewModel
 import com.example.fast_pedals_frontend.navigation.NavDestinations.BIKE
 import com.example.fast_pedals_frontend.navigation.NavDestinations.CREATE
+import com.example.fast_pedals_frontend.navigation.NavDestinations.EDIT
 import com.example.fast_pedals_frontend.navigation.NavDestinations.LISTING
 import com.example.fast_pedals_frontend.navigation.NavDestinations.LOGIN
 import com.example.fast_pedals_frontend.navigation.NavDestinations.REGISTER
@@ -54,13 +57,14 @@ fun NavigationHost(navController: NavHostController) {
     val bikeViewModel: BikeViewModel = koinViewModel()
     val sharedCriteriaViewModel: SharedCriteriaViewModel = koinViewModel()
     val createViewModel: CreateViewModel = koinViewModel()
+    val editViewModel: EditViewModel = koinViewModel()
+    val sharedEditViewModel: SharedEditViewModel = koinViewModel()
 
     var currentRoute by rememberSaveable { mutableStateOf(WELCOME) }
 
     Scaffold(
         bottomBar = {
             if (shouldShowBottomNavigation(currentRoute)) {
-                Log.d("NavigationHost", "shouldShowBottomNavigation: $currentRoute")
                 BottomNavigation {
                     BottomNavigationItem(
                         icon = { Icon(Icons.Filled.Search, contentDescription = null) },
@@ -128,7 +132,10 @@ fun NavigationHost(navController: NavHostController) {
                         BikeScreen(
                             bikeViewModel = bikeViewModel,
                             listingId = it,
-                            onBack = { currentRoute = LISTING }
+                            onBack = { currentRoute = LISTING },
+                            onEdit = { currentRoute = "$EDIT/$listingId" },
+                            onDelete = { currentRoute = LISTING },
+                            sharedEditViewModel = sharedEditViewModel
                         )
                     }
                 }
@@ -138,6 +145,18 @@ fun NavigationHost(navController: NavHostController) {
                             currentRoute = "$BIKE/$listingId" },
                         createViewModel = createViewModel
                     )
+                }
+                composable("$EDIT/{listingId}") { backStackEntry ->
+                    val listingId = backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
+
+                    listingId?.let {
+                        EditScreen(
+                            editViewModel = editViewModel,
+                            listingId = it,
+                            onEdit = { currentRoute = LISTING },
+                            sharedEditViewModel = sharedEditViewModel
+                        )
+                    }
                 }
             }
         }
@@ -156,6 +175,10 @@ fun NavigationHost(navController: NavHostController) {
                     val listingId = currentRoute.removePrefix(BIKE).substringAfter("/")
                     navController.navigate("$BIKE/$listingId")
                 }
+                if (currentRoute.startsWith(EDIT)) {
+                    val listingId = currentRoute.removePrefix(EDIT).substringAfter("/")
+                    navController.navigate("$EDIT/$listingId")
+                }
             }
         }
     }
@@ -164,5 +187,5 @@ fun NavigationHost(navController: NavHostController) {
 @Composable
 fun shouldShowBottomNavigation(currentRoute: String): Boolean {
     return currentRoute !in listOf(WELCOME, REGISTER, LOGIN) &&
-            !currentRoute.startsWith("$BIKE/")
+            !currentRoute.startsWith("$BIKE/") && !currentRoute.startsWith("$EDIT/")
 }

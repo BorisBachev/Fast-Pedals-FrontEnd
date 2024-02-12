@@ -2,6 +2,7 @@ package com.example.fast_pedals_frontend
 
 import com.example.fast_pedals_frontend.RetrofitHost.EMULATOR
 import com.example.fast_pedals_frontend.RetrofitHost.PHONE
+import com.example.fast_pedals_frontend.RetrofitHost.PHONE_HOTSPOT
 import com.example.fast_pedals_frontend.RetrofitHost.PHONE_OFFICE
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.auth.AuthApi
@@ -17,6 +18,11 @@ import com.example.fast_pedals_frontend.create.CreateViewModel
 import com.example.fast_pedals_frontend.create.api.CreateApi
 import com.example.fast_pedals_frontend.create.api.CreateService
 import com.example.fast_pedals_frontend.create.api.CreateServiceImpl
+import com.example.fast_pedals_frontend.edit.EditViewModel
+import com.example.fast_pedals_frontend.edit.SharedEditViewModel
+import com.example.fast_pedals_frontend.edit.api.EditApi
+import com.example.fast_pedals_frontend.edit.api.EditService
+import com.example.fast_pedals_frontend.edit.api.EditServiceImpl
 import com.example.fast_pedals_frontend.listing.api.ListingApi
 import com.example.fast_pedals_frontend.listing.api.ListingService
 import com.example.fast_pedals_frontend.listing.api.ListingServiceImpl
@@ -53,7 +59,7 @@ val appModule = module {
             .addInterceptor(httpInterceptor)
 
         Retrofit.Builder()
-            .baseUrl(PHONE)
+            .baseUrl(PHONE_HOTSPOT)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClientBuilder.build())
             .build()
@@ -75,6 +81,9 @@ val appModule = module {
     single<CreateApi>(named("CreateApi")) {
         get<Retrofit>(named("Retrofit")).create(CreateApi::class.java)
     }
+    single<EditApi>(named("EditApi")) {
+        get<Retrofit>(named("Retrofit")).create(EditApi::class.java)
+    }
 
 
     single<AuthService> {
@@ -91,6 +100,9 @@ val appModule = module {
     }
     single<CreateService> {
         CreateServiceImpl(get(named("CreateApi")))
+    }
+    single<EditService> {
+        EditServiceImpl(get(named("EditApi")))
     }
 
 
@@ -113,10 +125,13 @@ val appModule = module {
         SharedCriteriaViewModel()
     }
     viewModel {
-        SearchViewModel()
+        SharedEditViewModel()
     }
     viewModel {
         CreateViewModel(get<CreateService>())
+    }
+    viewModel {
+        EditViewModel(get<EditService>(), get<SharedEditViewModel>())
     }
 
 }

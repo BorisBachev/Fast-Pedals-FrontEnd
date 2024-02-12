@@ -3,6 +3,7 @@ package com.example.fast_pedals_frontend.bike
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,15 +54,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fast_pedals_frontend.R
-import com.example.fast_pedals_frontend.bike.api.BikeResponse
+import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
+import com.example.fast_pedals_frontend.edit.SharedEditViewModel
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BikeScreen(
+
     bikeViewModel: BikeViewModel,
     listingId: Long,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onEdit: (Long) -> Unit,
+    onDelete: () -> Unit,
+    sharedEditViewModel: SharedEditViewModel
+
 ) {
 
     val state by bikeViewModel.bikeState
@@ -74,7 +82,10 @@ fun BikeScreen(
 
     val isFavourite by bikeViewModel.isFavourite.collectAsState()
 
+    val isFromUser by bikeViewModel.isFromUser.collectAsState()
+
     bikeViewModel.isFavourite(listingId)
+    bikeViewModel.isFromUser()
 
     val iconTint = if (isFavourite == true) Color.Red else Color.White
 
@@ -169,10 +180,37 @@ fun BikeScreen(
                         }
                     }
                 }
-            }
-        )
+            },
+            bottomBar = {
+                if (isFromUser == true) {
+                    sharedEditViewModel.setEditRequest(listingId, bike!!, listing!!)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                bikeViewModel.deleteListing()
+                                onDelete()
+                                      },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Delete Listing")
+                        }
 
-    }
+                        Button(
+                            onClick = { onEdit(listingId) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Edit Listing")
+                        }
+                    }
+                }
+            }
+            )
+        }
 }
 
 @OptIn(ExperimentalFoundationApi::class)

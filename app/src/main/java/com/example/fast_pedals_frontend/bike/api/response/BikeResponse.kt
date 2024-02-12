@@ -1,4 +1,4 @@
-package com.example.fast_pedals_frontend.bike.api
+package com.example.fast_pedals_frontend.bike.api.response
 
 import com.example.fast_pedals_frontend.bike.enums.BikeBrand
 import com.example.fast_pedals_frontend.bike.enums.BikeType

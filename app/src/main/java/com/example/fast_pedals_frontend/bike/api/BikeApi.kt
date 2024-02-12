@@ -7,9 +7,11 @@ import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE
 import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE_CHECK
 import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE_DELETE
 import com.example.fast_pedals_frontend.bike.api.BikeDestinations.LISTING
+import com.example.fast_pedals_frontend.bike.api.BikeDestinations.USER
+import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
+import com.example.fast_pedals_frontend.bike.api.response.UserResponse
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -32,6 +34,9 @@ interface BikeApi {
         @Path("userId") userId: Long
     ): ContactInfo
 
+    @GET(USER)
+    suspend fun getUser(): UserResponse
+
     @POST(FAVOURITE_CHECK)
     suspend fun favouriteCheck(
         @Path("listingId") listingId: Long
@@ -44,6 +49,11 @@ interface BikeApi {
 
     @DELETE(FAVOURITE_DELETE)
     suspend fun unFavourite(
+        @Path("listingId") listingId: Long
+    ): Response<Unit>
+
+    @DELETE(LISTING)
+    suspend fun deleteListing(
         @Path("listingId") listingId: Long
     ): Response<Unit>
 

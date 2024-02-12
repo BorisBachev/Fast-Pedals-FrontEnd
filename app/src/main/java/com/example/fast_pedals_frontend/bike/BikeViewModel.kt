@@ -4,7 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fast_pedals_frontend.bike.api.BikeResponse
+import com.example.fast_pedals_frontend.bike.Constants.ERROR_MESSAGE
+import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
 import com.example.fast_pedals_frontend.bike.api.BikeService
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,9 @@ class BikeViewModel(
     private val _isFavourite = MutableStateFlow<Boolean?>(null)
     val isFavourite: StateFlow<Boolean?> = _isFavourite
 
+    private val _isFromUser = MutableStateFlow<Boolean?>(null)
+    val isFromUser: StateFlow<Boolean?> = _isFromUser
+
     fun getBike(bikeId: Long) {
 
         viewModelScope.launch {
@@ -42,7 +46,7 @@ class BikeViewModel(
                 _bike.value = response
                 _bikeState.value = BikeState.Success
             } catch (e: Exception) {
-                _bikeState.value = BikeState.Error("An error occurred")
+                _bikeState.value = BikeState.Error(ERROR_MESSAGE)
             }
 
         }
@@ -60,7 +64,7 @@ class BikeViewModel(
                 _listing.value = response
                 _bikeState.value = BikeState.Success
             } catch (e: Exception) {
-                _bikeState.value = BikeState.Error("An error occurred")
+                _bikeState.value = BikeState.Error(ERROR_MESSAGE)
             }
 
         }
@@ -78,7 +82,7 @@ class BikeViewModel(
                 _contactInfo.value = response
                 _bikeState.value = BikeState.Success
             } catch (e: Exception) {
-                _bikeState.value = BikeState.Error("An error occurred")
+                _bikeState.value = BikeState.Error(ERROR_MESSAGE)
             }
 
         }
@@ -93,7 +97,7 @@ class BikeViewModel(
                 _isFavourite.value = response.body()
                 _bikeState.value = BikeState.Success
             } catch (e: Exception) {
-                _bikeState.value = BikeState.Error("An error occurred")
+                _bikeState.value = BikeState.Error(ERROR_MESSAGE)
             }
         }
     }
@@ -105,10 +109,10 @@ class BikeViewModel(
             _bikeState.value = BikeState.Loading
 
             try {
-                val response = bikeService.favourite(listingId)
+                bikeService.favourite(listingId)
                 _bikeState.value = BikeState.Success
             } catch (e: Exception) {
-                _bikeState.value = BikeState.Error("An error occurred")
+                _bikeState.value = BikeState.Error(ERROR_MESSAGE)
             }
 
         }
@@ -122,10 +126,10 @@ class BikeViewModel(
             _bikeState.value = BikeState.Loading
 
             try {
-                val response = bikeService.unFavourite(listingId)
+                bikeService.unFavourite(listingId)
                 _bikeState.value = BikeState.Success
             } catch (e: Exception) {
-                _bikeState.value = BikeState.Error("An error occurred")
+                _bikeState.value = BikeState.Error(ERROR_MESSAGE)
             }
 
         }
@@ -134,6 +138,40 @@ class BikeViewModel(
 
     fun toggleFavourite() {
         _isFavourite.value = !_isFavourite.value!!
+    }
+
+    fun isFromUser() {
+
+        viewModelScope.launch {
+
+            _bikeState.value = BikeState.Loading
+
+            try {
+                val response = bikeService.getUser()
+                if(response.id == _listing.value?.userId && response.name == _contactInfo.value?.name && response.phoneNumber == _contactInfo.value?.phoneNumber) {
+                    _isFromUser.value = true
+                }else {
+                    _isFromUser.value = false
+                }
+                _bikeState.value = BikeState.Success
+            } catch (e: Exception) {
+                _bikeState.value = BikeState.Error(ERROR_MESSAGE)
+            }
+
+        }
+
+    }
+
+    fun deleteListing() {
+        viewModelScope.launch {
+            _bikeState.value = BikeState.Loading
+            try {
+                _listing.value?.let { bikeService.deleteListing(it.id) }
+                _bikeState.value = BikeState.Success
+            } catch (e: Exception) {
+                _bikeState.value = BikeState.Error(ERROR_MESSAGE)
+            }
+        }
     }
 
 }
