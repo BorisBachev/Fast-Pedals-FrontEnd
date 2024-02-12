@@ -112,7 +112,15 @@ fun SearchScreen(
                                         expanded = isBrandDropdownExpanded,
                                         onDismissRequest = { searchViewModel.toggleBrandDropdown() }
                                     ) {
-                                        BikeBrand.entries.forEach { brand ->
+                                        DropdownMenuItem(
+                                            text = { Text("ALL") },
+                                            onClick = {
+                                                sharedCriteriaViewModel.updateBrand(null)
+                                                searchViewModel.toggleBrandDropdown()
+                                            }
+                                        )
+
+                                        BikeBrand.values().forEach { brand ->
                                             DropdownMenuItem(
                                                 text = { Text(brand.name) },
                                                 onClick = {
@@ -156,7 +164,14 @@ fun SearchScreen(
                                         expanded = isTypeDropdownExpanded,
                                         onDismissRequest = { searchViewModel.toggleTypeDropdown() }
                                     ) {
-                                        BikeType.entries.forEach { type ->
+                                        DropdownMenuItem(
+                                            text = { Text("ALL") },
+                                            onClick = {
+                                                sharedCriteriaViewModel.updateType(null)
+                                                searchViewModel.toggleTypeDropdown()
+                                            }
+                                        )
+                                        BikeType.values().forEach { type ->
                                             DropdownMenuItem(
                                                 text = { Text(type.name) },
                                                 onClick = {

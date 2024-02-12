@@ -13,6 +13,10 @@ import com.example.fast_pedals_frontend.bike.BikeViewModel
 import com.example.fast_pedals_frontend.bike.api.BikeApi
 import com.example.fast_pedals_frontend.bike.api.BikeService
 import com.example.fast_pedals_frontend.bike.api.BikeServiceImpl
+import com.example.fast_pedals_frontend.create.CreateViewModel
+import com.example.fast_pedals_frontend.create.api.CreateApi
+import com.example.fast_pedals_frontend.create.api.CreateService
+import com.example.fast_pedals_frontend.create.api.CreateServiceImpl
 import com.example.fast_pedals_frontend.listing.api.ListingApi
 import com.example.fast_pedals_frontend.listing.api.ListingService
 import com.example.fast_pedals_frontend.listing.api.ListingServiceImpl
@@ -68,6 +72,9 @@ val appModule = module {
     single<SearchApi>(named("SearchApi")) {
         get<Retrofit>(named("Retrofit")).create(SearchApi::class.java)
     }
+    single<CreateApi>(named("CreateApi")) {
+        get<Retrofit>(named("Retrofit")).create(CreateApi::class.java)
+    }
 
 
     single<AuthService> {
@@ -81,6 +88,9 @@ val appModule = module {
     }
     single<SearchService> {
         SearchServiceImpl(get(named("SearchApi")))
+    }
+    single<CreateService> {
+        CreateServiceImpl(get(named("CreateApi")))
     }
 
 
@@ -97,13 +107,16 @@ val appModule = module {
         ListingViewModel(get<ListingService>(), get<SearchService>(), get<SharedCriteriaViewModel>())
     }
     viewModel {
-        BikeViewModel(get())
+        BikeViewModel(get<BikeService>())
     }
     viewModel {
         SharedCriteriaViewModel()
     }
     viewModel {
         SearchViewModel()
+    }
+    viewModel {
+        CreateViewModel(get<CreateService>())
     }
 
 }
