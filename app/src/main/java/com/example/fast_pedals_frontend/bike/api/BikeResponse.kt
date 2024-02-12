@@ -13,4 +13,5 @@ data class BikeResponse (
     val wheelSize: Int,
     val frameMaterial: String
 
+
 )

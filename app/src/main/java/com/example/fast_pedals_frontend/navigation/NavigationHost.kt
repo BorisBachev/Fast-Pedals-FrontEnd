@@ -1,10 +1,12 @@
 package com.example.fast_pedals_frontend.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.FiberNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -26,9 +28,12 @@ import com.example.fast_pedals_frontend.auth.WelcomeScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
 import com.example.fast_pedals_frontend.bike.BikeScreen
 import com.example.fast_pedals_frontend.bike.BikeViewModel
+import com.example.fast_pedals_frontend.create.CreateScreen
+import com.example.fast_pedals_frontend.create.CreateViewModel
 import com.example.fast_pedals_frontend.listing.ListingScreen
 import com.example.fast_pedals_frontend.listing.ListingViewModel
 import com.example.fast_pedals_frontend.navigation.NavDestinations.BIKE
+import com.example.fast_pedals_frontend.navigation.NavDestinations.CREATE
 import com.example.fast_pedals_frontend.navigation.NavDestinations.LISTING
 import com.example.fast_pedals_frontend.navigation.NavDestinations.LOGIN
 import com.example.fast_pedals_frontend.navigation.NavDestinations.REGISTER
@@ -48,12 +53,14 @@ fun NavigationHost(navController: NavHostController) {
     val listingViewModel: ListingViewModel = koinViewModel()
     val bikeViewModel: BikeViewModel = koinViewModel()
     val sharedCriteriaViewModel: SharedCriteriaViewModel = koinViewModel()
+    val createViewModel: CreateViewModel = koinViewModel()
 
     var currentRoute by rememberSaveable { mutableStateOf(WELCOME) }
 
     Scaffold(
         bottomBar = {
             if (shouldShowBottomNavigation(currentRoute)) {
+                Log.d("NavigationHost", "shouldShowBottomNavigation: $currentRoute")
                 BottomNavigation {
                     BottomNavigationItem(
                         icon = { Icon(Icons.Filled.Search, contentDescription = null) },
@@ -66,6 +73,12 @@ fun NavigationHost(navController: NavHostController) {
                         label = { Text("Listing") },
                         selected = currentRoute == LISTING,
                         onClick = { currentRoute = LISTING }
+                    )
+                    BottomNavigationItem(
+                        icon = { Icon(Icons.Default.FiberNew, contentDescription = null) },
+                        label = { Text("Create") },
+                        selected = currentRoute == CREATE,
+                        onClick = { currentRoute = CREATE },
                     )
                 }
             }
@@ -119,6 +132,13 @@ fun NavigationHost(navController: NavHostController) {
                         )
                     }
                 }
+                composable(CREATE) {
+                    CreateScreen(
+                        onCreate = { listingId ->
+                            currentRoute = "$BIKE/$listingId" },
+                        createViewModel = createViewModel
+                    )
+                }
             }
         }
     )
@@ -130,6 +150,7 @@ fun NavigationHost(navController: NavHostController) {
             LOGIN -> navController.navigate(LOGIN)
             LISTING -> navController.navigate(LISTING)
             SEARCH -> navController.navigate(SEARCH)
+            CREATE -> navController.navigate(CREATE)
             else -> {
                 if (currentRoute.startsWith(BIKE)) {
                     val listingId = currentRoute.removePrefix(BIKE).substringAfter("/")

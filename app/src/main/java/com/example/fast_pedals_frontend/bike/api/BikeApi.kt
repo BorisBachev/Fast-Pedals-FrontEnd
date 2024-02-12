@@ -10,6 +10,7 @@ import com.example.fast_pedals_frontend.bike.api.BikeDestinations.LISTING
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -33,17 +34,17 @@ interface BikeApi {
 
     @POST(FAVOURITE_CHECK)
     suspend fun favouriteCheck(
-        @Body favouriteRequest: FavouriteRequest
+        @Path("listingId") listingId: Long
     ): Response<Boolean>
 
     @POST(FAVOURITE)
     suspend fun favourite(
-        @Body favouriteRequest: FavouriteRequest
+        @Path("listingId") listingId: Long
     ): Response<Unit>
 
-    @POST(FAVOURITE_DELETE)
+    @DELETE(FAVOURITE_DELETE)
     suspend fun unFavourite(
-        @Body favouriteRequest: FavouriteRequest
+        @Path("listingId") listingId: Long
     ): Response<Unit>
 
 }

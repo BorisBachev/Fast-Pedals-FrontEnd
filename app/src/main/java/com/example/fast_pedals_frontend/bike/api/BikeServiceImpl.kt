@@ -26,49 +26,20 @@ class BikeServiceImpl(
 
     override suspend fun favouriteCheck(listingId: Long): Response<Boolean> {
 
-        val tokenParts = AuthSharedPreferences.getJwtToken().split(".")
-
-        val payloadJson = JSONObject(decodeBase64(tokenParts[1]))
-
-        val userEmail = payloadJson.getString("sub")
-
-        val favouriteRequest = FavouriteRequest(userEmail, listingId)
-
-        return bikeApi.favouriteCheck(favouriteRequest)
+        return bikeApi.favouriteCheck(listingId)
 
     }
 
     override suspend fun favourite(listingId: Long): Response<Unit> {
 
-        val tokenParts = AuthSharedPreferences.getJwtToken().split(".")
-
-        val payloadJson = JSONObject(decodeBase64(tokenParts[1]))
-
-        val userEmail = payloadJson.getString("sub")
-
-        val favouriteRequest = FavouriteRequest(userEmail, listingId)
-
-        return bikeApi.favourite(favouriteRequest)
+        return bikeApi.favourite(listingId)
 
     }
 
     override suspend fun unFavourite(listingId: Long): Response<Unit> {
 
-        val tokenParts = AuthSharedPreferences.getJwtToken().split(".")
+        return bikeApi.unFavourite(listingId)
 
-        val payloadJson = JSONObject(decodeBase64(tokenParts[1]))
-
-        val userEmail = payloadJson.getString("sub")
-
-        val favouriteRequest = FavouriteRequest(userEmail, listingId)
-
-        return bikeApi.unFavourite(favouriteRequest)
-
-    }
-
-    fun decodeBase64(input: String): String {
-        val decodedBytes = Base64.getDecoder().decode(input)
-        return String(decodedBytes)
     }
 
 }
