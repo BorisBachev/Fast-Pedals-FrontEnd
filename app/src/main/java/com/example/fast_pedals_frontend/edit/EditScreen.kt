@@ -60,9 +60,9 @@ fun EditScreen(
     val isBrandDropdownExpanded by editViewModel.isBrandDropdownExpanded.collectAsState()
     val isTypeDropdownExpanded by editViewModel.isTypeDropdownExpanded.collectAsState()
 
-    val editRequest by editViewModel.editRequest.collectAsState()
+    val editRequest by sharedEditViewModel.editRequest.collectAsState()
 
-    Log.d("EditScreen", "Edit request: $editRequest")
+    val state by sharedEditViewModel.editState.collectAsState()
 
     FastPedalsFrontEndTheme {
         Scaffold(
@@ -287,7 +287,7 @@ fun EditScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = {
-                                    editViewModel.edit()
+                                    sharedEditViewModel.edit()
                                     onEdit(listingId)
                                 },
                                 modifier = Modifier

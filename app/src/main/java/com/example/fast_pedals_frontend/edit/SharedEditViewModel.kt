@@ -1,22 +1,29 @@
 package com.example.fast_pedals_frontend.edit
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
 import com.example.fast_pedals_frontend.bike.enums.BikeBrand
 import com.example.fast_pedals_frontend.bike.enums.BikeType
+import com.example.fast_pedals_frontend.edit.api.EditService
 import com.example.fast_pedals_frontend.edit.api.request_response.EditRequest
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-class SharedEditViewModel(): ViewModel() {
+class SharedEditViewModel(
+    private val editService: EditService
+): ViewModel() {
 
     private val _editRequest = MutableStateFlow(
         EditRequest(0,"", "", 0.0, "", date = LocalDate.now().toString() , listOf("", ""), BikeType.OTHER, BikeBrand.OTHER, "", "", 29, "", 0)
     )
     val editRequest: StateFlow<EditRequest> get() = _editRequest
+
+    private val _editState = MutableStateFlow<EditState>(EditState.None)
+    val editState: StateFlow<EditState> = _editState
 
     fun setEditRequest(listingId: Long, bike: BikeResponse, listing: ListingResponse) {
 
@@ -37,11 +44,28 @@ class SharedEditViewModel(): ViewModel() {
             bike.id
         )
 
-        Log.d("SharedEditViewModel", "Set Edit request: $editRequest")
-
         _editRequest.value = editRequest
 
     }
+
+    fun edit() {
+
+        viewModelScope.launch {
+
+            var editRequest = _editRequest.value
+            editRequest = editRequest.copy(bikeId = editRequest.id)
+
+            val response = editService.editListing(editRequest)
+
+            if (response.isSuccessful) {
+                _editState.value = EditState.Success
+            } else {
+                _editState.value = EditState.Error(response.message())
+            }
+
+        }
+    }
+
 
     fun updateEditRequest(newEditRequest: EditRequest) {
         _editRequest.value = newEditRequest
@@ -49,20 +73,14 @@ class SharedEditViewModel(): ViewModel() {
 
     fun updateTitle(title: String) {
         _editRequest.value = _editRequest.value.copy(title = title)
-        Log.d("SharedEditViewModel", "Edit request updateTitle: $editRequest")
-
     }
 
     fun updatePrice(price: Double?) {
         _editRequest.value = _editRequest.value.copy(price = price)
-        Log.d("SharedEditViewModel", "Edit request updatePrice: $editRequest")
-
     }
 
     fun updateLocation(location: String) {
         _editRequest.value = _editRequest.value.copy(location = location)
-        Log.d("SharedEditViewModel", "Edit request updateLocation: $editRequest")
-
     }
 
     fun updateDescription(description: String) {
@@ -95,7 +113,6 @@ class SharedEditViewModel(): ViewModel() {
 
     fun resetEditRequest() {
         _editRequest.value = EditRequest(0, "", "", 0.0, "", date = LocalDate.now().toString() , listOf("", ""), BikeType.OTHER, BikeBrand.OTHER, "", "", 29, "", 0)
-
     }
 
 }
