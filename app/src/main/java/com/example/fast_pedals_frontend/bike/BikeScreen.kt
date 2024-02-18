@@ -1,5 +1,6 @@
 package com.example.fast_pedals_frontend.bike
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,8 +43,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,8 +59,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fast_pedals_frontend.R
+import com.example.fast_pedals_frontend.auth.login.LoginState
 import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
 import com.example.fast_pedals_frontend.edit.SharedEditViewModel
+import com.example.fast_pedals_frontend.profile.api.UserResponse
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,11 +81,17 @@ fun BikeScreen(
     val state by bikeViewModel.bikeState
     val listing by bikeViewModel.listing.collectAsState()
     val bike by bikeViewModel.bike.collectAsState()
-    val contactInfo by bikeViewModel.contactInfo.collectAsState()
+    val ownerInfo by bikeViewModel.ownerInfo.collectAsState()
 
-    bikeViewModel.getListing(listingId)
-    listing?.let { bikeViewModel.getBike(it.bikeId) }
-    listing?.let { bikeViewModel.getContactInfo(it.userId) }
+    LaunchedEffect(listingId) {
+        bikeViewModel.getListing(listingId)
+    }
+
+    listing?.let {
+        bikeViewModel.getBike(it.bikeId)
+        bikeViewModel.getUserOwner(it.userId)
+    }
+    bikeViewModel.getUserInfo()
 
     val isFavourite by bikeViewModel.isFavourite.collectAsState()
 
@@ -88,6 +101,14 @@ fun BikeScreen(
     bikeViewModel.isFromUser()
 
     val iconTint = if (isFavourite == true) Color.Red else Color.White
+
+    if (state is BikeState.Error) {
+        Text(
+            text = (state as BikeState.Error).errorMessage,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -175,7 +196,7 @@ fun BikeScreen(
 
                             LocationBox(location = listing?.location ?: "")
 
-                            contactInfo?.let { ContactInfoBox(contactInfo = it) }
+                            ownerInfo?.let { ContactInfoBox(contactInfo = it) }
 
                         }
                     }
@@ -183,7 +204,9 @@ fun BikeScreen(
             },
             bottomBar = {
                 if (isFromUser == true) {
-                    sharedEditViewModel.setEditRequest(listingId, bike!!, listing!!)
+                    bike?.let {
+                        sharedEditViewModel.setEditRequest(listingId, it, listing!!)
+                    }
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -340,7 +363,7 @@ fun LocationBox(location: String) {
 }
 
 @Composable
-fun ContactInfoBox(contactInfo: ContactInfo) {
+fun ContactInfoBox(contactInfo: UserResponse) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

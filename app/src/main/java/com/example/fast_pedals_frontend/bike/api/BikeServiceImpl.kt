@@ -1,8 +1,6 @@
 package com.example.fast_pedals_frontend.bike.api
 
-import com.example.fast_pedals_frontend.bike.ContactInfo
 import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
-import com.example.fast_pedals_frontend.bike.api.response.UserResponse
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import retrofit2.Response
 
@@ -16,14 +14,6 @@ class BikeServiceImpl(
 
     override suspend fun getListing(listingId: Long): ListingResponse {
         return bikeApi.getListing(listingId)
-    }
-
-    override suspend fun getContactInfo(userId: Long): ContactInfo {
-        return bikeApi.getContactInfo(userId)
-    }
-
-    override suspend fun getUser(): UserResponse {
-        return bikeApi.getUser()
     }
 
     override suspend fun favouriteCheck(listingId: Long): Response<Boolean> {

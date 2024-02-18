@@ -2,17 +2,19 @@ package com.example.fast_pedals_frontend.auth.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -24,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.example.fast_pedals_frontend.auth.login.LoginState
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,16 +49,18 @@ fun RegisterScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val strings = RegisterScreenText()
+
     FastPedalsFrontEndTheme {
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 TopAppBar(
-                    title = { Text("Register") },
+                    title = { Text(strings.register) },
                     navigationIcon = {
                         IconButton(onClick = { onBack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = null)
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                         }
                     }
                 )
@@ -71,7 +76,7 @@ fun RegisterScreen(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { registerViewModel.updateName(it) },
-                        label = { Text("Username") },
+                        label = { Text(strings.username) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
@@ -79,7 +84,7 @@ fun RegisterScreen(
                     OutlinedTextField(
                         value = email,
                         onValueChange = { registerViewModel.updateEmail(it) },
-                        label = { Text("Email") },
+                        label = { Text(strings.email) },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
@@ -91,7 +96,7 @@ fun RegisterScreen(
                     OutlinedTextField(
                         value = password,
                         onValueChange = { registerViewModel.updatePassword(it) },
-                        label = { Text("Password") },
+                        label = { Text(strings.password) },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Next
@@ -114,7 +119,7 @@ fun RegisterScreen(
                     OutlinedTextField(
                         value = fullName,
                         onValueChange = { registerViewModel.updateFullName(it) },
-                        label = { Text("Full Name") },
+                        label = { Text(strings.fullName) },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
                         ),
@@ -125,7 +130,7 @@ fun RegisterScreen(
                     OutlinedTextField(
                         value = phoneNumber,
                         onValueChange = { registerViewModel.updatePhoneNumber(it) },
-                        label = { Text("Phone Number") },
+                        label = { Text(strings.phoneNumber) },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Phone,
                             imeAction = ImeAction.Done
@@ -138,31 +143,33 @@ fun RegisterScreen(
                         onClick = {
 
                             registerViewModel.register(name, email, password, fullName, phoneNumber)
-                            onRegisterComplete()
 
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                     ) {
-                        Text("Register")
+                        Text(strings.register)
                     }
+
+                    if (registerState == RegisterState.Loading) {
+                        CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+                    }
+
+                    if (registerState is RegisterState.Error) {
+                        Text(
+                            text = (registerState as RegisterState.Error).errorMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
+                    if (registerState == RegisterState.Success) {
+                        onRegisterComplete()
+                    }
+
                 }
             }
         )
-    }
-    LaunchedEffect(registerState) {
-        when (val state = registerState) {
-            is RegisterState.Success -> {
-                onRegisterComplete()
-            }
-            is RegisterState.Error -> {
-                snackbarHostState.showSnackbar(state.errorMessage)
-            }
-            RegisterState.Loading -> {
-            }
-            RegisterState.None -> {
-            }
-        }
     }
 }
