@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 class SharedCriteriaViewModel(): ViewModel() {
 
     private val _searchCriteria = MutableStateFlow(SearchCriteria("", 0.0, 10000.0, "", "",
-        null, null, "", "", wheelSize = null, ""))
+        null, null, "", "", wheelSize = null, "", userId = null))
     val searchCriteria: StateFlow<SearchCriteria> get() = _searchCriteria
 
     fun updateSearchCriteria(newSearchCriteria: SearchCriteria) {
@@ -60,9 +60,13 @@ class SharedCriteriaViewModel(): ViewModel() {
         _searchCriteria.value = searchCriteria.value.copy(frameMaterial = frameMaterial)
     }
 
+    fun updateUserId(userId: Long?) {
+        _searchCriteria.value = searchCriteria.value.copy(userId = userId)
+    }
+
     fun resetSearchCriteria() {
         _searchCriteria.value = SearchCriteria("", 0.0, 10000.0, "", "",
-            null, null, "", "", 0, "")
+            null, null, "", "", null, "", null)
     }
 
 

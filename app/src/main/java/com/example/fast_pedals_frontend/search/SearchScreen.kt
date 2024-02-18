@@ -55,6 +55,8 @@ fun SearchScreen(
 
     val searchCriteria by sharedCriteriaViewModel.searchCriteria.collectAsState()
 
+    sharedCriteriaViewModel.updateUserId(userId = null)
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -305,8 +307,7 @@ fun SearchScreen(
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp)
-                            ) {
+                                    .padding(8.dp)) {
                                 Text("Search")
                             }
                         }

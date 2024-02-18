@@ -4,7 +4,6 @@ import retrofit2.Response
 
 interface ListingService {
 
-    suspend fun getPreviews(
-    ): Response<List<ListingResponse>>
+    suspend fun getFavourites(): Response<List<ListingResponse>>
 
 }

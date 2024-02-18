@@ -6,7 +6,9 @@ import retrofit2.Response
 class ListingServiceImpl(
     private val listingApi: ListingApi
 ): ListingService {
-    override suspend fun getPreviews(): Response<List<ListingResponse>> {
-        return listingApi.getPreviews()
+
+    override suspend fun getFavourites(): Response<List<ListingResponse>> {
+        return listingApi.getFavourites()
     }
+
 }

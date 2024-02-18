@@ -10,11 +10,12 @@ data class SearchCriteria(
     val maxPrice: Double,
     val location: String,
     val description: String,
-    val type: BikeType?,
-    val brand: BikeBrand?,
+    val type: BikeType? = null,
+    val brand: BikeBrand? = null,
     val model: String,
     val size: String,
-    val wheelSize: Int?,
-    val frameMaterial: String
+    val wheelSize: Int? = null,
+    val frameMaterial: String,
+    val userId: Long? = null
 
 )
