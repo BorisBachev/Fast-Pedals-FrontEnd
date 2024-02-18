@@ -1,22 +1,27 @@
 package com.example.fast_pedals_frontend.navigation
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.FiberNew
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,6 +30,8 @@ import com.example.fast_pedals_frontend.auth.login.LoginScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterScreen
 import com.example.fast_pedals_frontend.auth.WelcomeScreen
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
+import com.example.fast_pedals_frontend.auth.start.StartState
+import com.example.fast_pedals_frontend.auth.start.StartViewModel
 import com.example.fast_pedals_frontend.bike.BikeScreen
 import com.example.fast_pedals_frontend.bike.BikeViewModel
 import com.example.fast_pedals_frontend.create.CreateScreen
@@ -38,10 +45,15 @@ import com.example.fast_pedals_frontend.navigation.NavDestinations.BIKE
 import com.example.fast_pedals_frontend.navigation.NavDestinations.CREATE
 import com.example.fast_pedals_frontend.navigation.NavDestinations.EDIT
 import com.example.fast_pedals_frontend.navigation.NavDestinations.LISTING
+import com.example.fast_pedals_frontend.navigation.NavDestinations.LOADING
 import com.example.fast_pedals_frontend.navigation.NavDestinations.LOGIN
+import com.example.fast_pedals_frontend.navigation.NavDestinations.PROFILE
 import com.example.fast_pedals_frontend.navigation.NavDestinations.REGISTER
 import com.example.fast_pedals_frontend.navigation.NavDestinations.SEARCH
 import com.example.fast_pedals_frontend.navigation.NavDestinations.WELCOME
+import com.example.fast_pedals_frontend.profile.ProfileScreen
+import com.example.fast_pedals_frontend.profile.ProfileViewModel
+import com.example.fast_pedals_frontend.profile.SharedFavouriteViewModel
 import com.example.fast_pedals_frontend.search.SearchScreen
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
@@ -59,36 +71,104 @@ fun NavigationHost(navController: NavHostController) {
     val createViewModel: CreateViewModel = koinViewModel()
     val editViewModel: EditViewModel = koinViewModel()
     val sharedEditViewModel: SharedEditViewModel = koinViewModel()
+    val profileViewModel: ProfileViewModel = koinViewModel()
+    val favouriteViewModel: SharedFavouriteViewModel = koinViewModel()
+    val startViewModel: StartViewModel = koinViewModel()
 
-    var currentRoute by rememberSaveable { mutableStateOf(WELCOME) }
+    val isLogged by startViewModel.isLogged.collectAsState()
+    val state by startViewModel.startState.collectAsState()
+
+    var currentRoute by rememberSaveable { mutableStateOf(LOADING) }
+
+    LaunchedEffect(Unit) {
+        startViewModel.checkToken()
+    }
+
+    LaunchedEffect(state) {
+        when {
+            state == StartState.None || state == StartState.Loading -> {
+                currentRoute = LOADING
+            }
+            state == StartState.Success && isLogged -> {
+                currentRoute = LISTING
+            }
+            else -> {
+                currentRoute = WELCOME
+            }
+        }
+    }
 
     Scaffold(
         bottomBar = {
             if (shouldShowBottomNavigation(currentRoute)) {
-                BottomNavigation {
+                BottomNavigation(
+                    modifier = Modifier.height(64.dp),
+                ) {
                     BottomNavigationItem(
-                        icon = { Icon(Icons.Filled.Search, contentDescription = null) },
-                        label = { Text("Search") },
+                        icon = {
+                            Icon(
+                                Icons.Filled.Search,
+                                contentDescription = null,
+                                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                            )
+                        },
+                        label = {
+                            Text("Search", modifier = Modifier.padding(top = 8.dp))
+                        },
                         selected = currentRoute == SEARCH,
-                        onClick = { currentRoute = SEARCH }
+                        onClick = { currentRoute = SEARCH },
+                        selectedContentColor = colorScheme.primary,
                     )
                     BottomNavigationItem(
-                        icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-                        label = { Text("Listing") },
+                        icon = {
+                            Icon(
+                                Icons.AutoMirrored.Filled.List,
+                                contentDescription = null,
+                                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                            )
+                        },
+                        label = {
+                            Text("Listing", modifier = Modifier.padding(top = 4.dp))
+                        },
                         selected = currentRoute == LISTING,
-                        onClick = { currentRoute = LISTING }
+                        onClick = { currentRoute = LISTING },
+                        selectedContentColor = colorScheme.primary,
                     )
                     BottomNavigationItem(
-                        icon = { Icon(Icons.Default.FiberNew, contentDescription = null) },
-                        label = { Text("Create") },
+                        icon = {
+                            Icon(
+                                Icons.Default.FiberNew,
+                                contentDescription = null,
+                                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                            )
+                        },
+                        label = {
+                            Text("Create", modifier = Modifier.padding(top = 4.dp))
+                        },
                         selected = currentRoute == CREATE,
                         onClick = { currentRoute = CREATE },
+                        selectedContentColor = colorScheme.primary,
+                    )
+                    BottomNavigationItem(
+                        icon = {
+                            Icon(
+                                Icons.Default.Person,
+                                contentDescription = null,
+                                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                            )
+                        },
+                        label = {
+                            Text("Profile", modifier = Modifier.padding(top = 4.dp))
+                        },
+                        selected = currentRoute == PROFILE,
+                        onClick = { currentRoute =PROFILE },
+                        selectedContentColor = colorScheme.primary,
                     )
                 }
             }
         },
         content = { innerPadding ->
-            NavHost(navController, startDestination = WELCOME, Modifier.padding(innerPadding)) {
+            NavHost(navController, startDestination = LOADING, Modifier.padding(innerPadding)) {
                 composable(WELCOME) {
                     WelcomeScreen(
                         toRegister = { currentRoute = REGISTER },
@@ -99,7 +179,7 @@ fun NavigationHost(navController: NavHostController) {
                     RegisterScreen(
                         registerViewModel = registerViewModel,
                         onBack = { currentRoute = WELCOME },
-                        onRegisterComplete = { currentRoute = SEARCH }
+                        onRegisterComplete = { currentRoute = LISTING }
                     )
                 }
                 composable(LOGIN) {
@@ -115,7 +195,8 @@ fun NavigationHost(navController: NavHostController) {
                         sharedCriteriaViewModel = sharedCriteriaViewModel,
                         onClick = { listingId ->
                             currentRoute = "$BIKE/$listingId"
-                        }
+                        },
+                        sharedFavouriteViewModel = favouriteViewModel
                     )
                 }
                 composable(SEARCH) {
@@ -126,7 +207,8 @@ fun NavigationHost(navController: NavHostController) {
                     )
                 }
                 composable("$BIKE/{listingId}") { backStackEntry ->
-                    val listingId = backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
+                    val listingId =
+                        backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
 
                     listingId?.let {
                         BikeScreen(
@@ -142,12 +224,14 @@ fun NavigationHost(navController: NavHostController) {
                 composable(CREATE) {
                     CreateScreen(
                         onCreate = { listingId ->
-                            currentRoute = "$BIKE/$listingId" },
+                            currentRoute = "$BIKE/$listingId"
+                        },
                         createViewModel = createViewModel
                     )
                 }
                 composable("$EDIT/{listingId}") { backStackEntry ->
-                    val listingId = backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
+                    val listingId =
+                        backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
 
                     listingId?.let {
                         EditScreen(
@@ -157,6 +241,19 @@ fun NavigationHost(navController: NavHostController) {
                             sharedEditViewModel = sharedEditViewModel
                         )
                     }
+                }
+                composable(PROFILE) {
+                    ProfileScreen(
+                        profileViewModel = profileViewModel,
+                        onListingsClick = { currentRoute = LISTING },
+                        onFavouritesClick = { currentRoute = LISTING },
+                        onLogoutClick = { currentRoute = WELCOME },
+                        sharedFavouriteViewModel = favouriteViewModel,
+                        sharedCriteriaViewModel = sharedCriteriaViewModel
+                    )
+                }
+                composable(LOADING) {
+                    LoadingScreen()
                 }
             }
         }
@@ -170,6 +267,7 @@ fun NavigationHost(navController: NavHostController) {
             LISTING -> navController.navigate(LISTING)
             SEARCH -> navController.navigate(SEARCH)
             CREATE -> navController.navigate(CREATE)
+            PROFILE -> navController.navigate(PROFILE)
             else -> {
                 if (currentRoute.startsWith(BIKE)) {
                     val listingId = currentRoute.removePrefix(BIKE).substringAfter("/")
@@ -186,6 +284,6 @@ fun NavigationHost(navController: NavHostController) {
 
 @Composable
 fun shouldShowBottomNavigation(currentRoute: String): Boolean {
-    return currentRoute !in listOf(WELCOME, REGISTER, LOGIN) &&
+    return currentRoute !in listOf(WELCOME, REGISTER, LOGIN, LOADING) &&
             !currentRoute.startsWith("$BIKE/") && !currentRoute.startsWith("$EDIT/")
 }

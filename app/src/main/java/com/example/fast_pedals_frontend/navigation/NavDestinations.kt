@@ -9,4 +9,6 @@ object NavDestinations {
     const val BIKE = "bike"
     const val CREATE = "create"
     const val EDIT = "edit"
+    const val PROFILE = "profile"
+    const val LOADING = "loading"
 }
