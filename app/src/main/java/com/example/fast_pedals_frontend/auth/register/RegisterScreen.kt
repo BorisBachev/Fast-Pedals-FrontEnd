@@ -2,17 +2,19 @@ package com.example.fast_pedals_frontend.auth.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -24,7 +26,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import kotlinx.coroutines.launch
+import com.example.fast_pedals_frontend.auth.login.LoginState
+import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,120 +49,127 @@ fun RegisterScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = { Text("Register") },
-                navigationIcon = {
-                    IconButton(onClick = { onBack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
-                    }
-                }
-            )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { registerViewModel.updateName(it) },
-                    label = { Text("Username") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { registerViewModel.updateEmail(it) },
-                    label = { Text("Email") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { registerViewModel.updatePassword(it) },
-                    label = { Text("Password") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
-                    ),
-                    visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = { passwordVisibility = !passwordVisibility }
-                        ) {
-                            Icon(
-                                if (passwordVisibility) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = null
-                            )
+    val strings = RegisterScreenText()
+
+    FastPedalsFrontEndTheme {
+
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                TopAppBar(
+                    title = { Text(strings.register) },
+                    navigationIcon = {
+                        IconButton(onClick = { onBack() }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                         }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                    }
                 )
-                OutlinedTextField(
-                    value = fullName,
-                    onValueChange = { registerViewModel.updateFullName(it) },
-                    label = { Text("Full Name") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
+            },
+            content = { paddingValues ->
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                OutlinedTextField(
-                    value = phoneNumber,
-                    onValueChange = { registerViewModel.updatePhoneNumber(it) },
-                    label = { Text("Phone Number") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Phone,
-                        imeAction = ImeAction.Done
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-                Button(
-                    onClick = {
-
-                        registerViewModel.register(name, email, password, fullName, phoneNumber)
-                        onRegisterComplete()
-
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text("Register")
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { registerViewModel.updateName(it) },
+                        label = { Text(strings.username) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { registerViewModel.updateEmail(it) },
+                        label = { Text(strings.email) },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { registerViewModel.updatePassword(it) },
+                        label = { Text(strings.password) },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Next
+                        ),
+                        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { passwordVisibility = !passwordVisibility }
+                            ) {
+                                Icon(
+                                    if (passwordVisibility) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    OutlinedTextField(
+                        value = fullName,
+                        onValueChange = { registerViewModel.updateFullName(it) },
+                        label = { Text(strings.fullName) },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    OutlinedTextField(
+                        value = phoneNumber,
+                        onValueChange = { registerViewModel.updatePhoneNumber(it) },
+                        label = { Text(strings.phoneNumber) },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Phone,
+                            imeAction = ImeAction.Done
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                    Button(
+                        onClick = {
+
+                            registerViewModel.register(name, email, password, fullName, phoneNumber)
+
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Text(strings.register)
+                    }
+
+                    if (registerState == RegisterState.Loading) {
+                        CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+                    }
+
+                    if (registerState is RegisterState.Error) {
+                        Text(
+                            text = (registerState as RegisterState.Error).errorMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
+                    if (registerState == RegisterState.Success) {
+                        onRegisterComplete()
+                    }
+
                 }
             }
-        }
-    )
-    LaunchedEffect(registerState) {
-        when (val state = registerState) {
-            is RegisterState.Success -> {
-                onRegisterComplete()
-            }
-            is RegisterState.Error -> {
-                snackbarHostState.showSnackbar(state.errorMessage)
-            }
-            RegisterState.Loading -> {
-            }
-            RegisterState.None -> {
-            }
-        }
+        )
     }
 }

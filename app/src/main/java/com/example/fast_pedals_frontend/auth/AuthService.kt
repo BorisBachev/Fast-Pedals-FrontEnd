@@ -4,7 +4,6 @@ import com.example.fast_pedals_frontend.auth.login.LoginResponse
 import com.example.fast_pedals_frontend.auth.register.RegisterResponse
 import retrofit2.Response
 
-
 interface AuthService {
 
     suspend fun register(

@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -43,7 +43,7 @@ fun WelcomeScreen(
                     .padding(8.dp)
             ) {
                 Text("Register")
-                Icon(Icons.Default.ArrowForward, contentDescription = null)
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -55,7 +55,7 @@ fun WelcomeScreen(
                     .padding(8.dp)
             ) {
                 Text("Login")
-                Icon(Icons.Default.ArrowForward, contentDescription = null)
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
             }
         }
     }

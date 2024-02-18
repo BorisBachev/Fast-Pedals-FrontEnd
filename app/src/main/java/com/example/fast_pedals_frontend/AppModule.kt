@@ -1,13 +1,36 @@
 package com.example.fast_pedals_frontend
 
+import com.example.fast_pedals_frontend.RetrofitHost.EMULATOR
+import com.example.fast_pedals_frontend.RetrofitHost.PHONE
+import com.example.fast_pedals_frontend.RetrofitHost.PHONE_HOTSPOT
+import com.example.fast_pedals_frontend.RetrofitHost.PHONE_OFFICE
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.auth.AuthApi
 import com.example.fast_pedals_frontend.auth.AuthService
 import com.example.fast_pedals_frontend.auth.AuthServiceImpl
 import com.example.fast_pedals_frontend.auth.login.LogInViewModel
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
-import com.example.fast_pedals_frontend.listing.ListingApi
-import okhttp3.Interceptor
+import com.example.fast_pedals_frontend.bike.BikeViewModel
+import com.example.fast_pedals_frontend.bike.api.BikeApi
+import com.example.fast_pedals_frontend.bike.api.BikeService
+import com.example.fast_pedals_frontend.bike.api.BikeServiceImpl
+import com.example.fast_pedals_frontend.create.CreateViewModel
+import com.example.fast_pedals_frontend.create.api.CreateApi
+import com.example.fast_pedals_frontend.create.api.CreateService
+import com.example.fast_pedals_frontend.create.api.CreateServiceImpl
+import com.example.fast_pedals_frontend.edit.EditViewModel
+import com.example.fast_pedals_frontend.edit.SharedEditViewModel
+import com.example.fast_pedals_frontend.edit.api.EditApi
+import com.example.fast_pedals_frontend.edit.api.EditService
+import com.example.fast_pedals_frontend.edit.api.EditServiceImpl
+import com.example.fast_pedals_frontend.listing.api.ListingApi
+import com.example.fast_pedals_frontend.listing.api.ListingService
+import com.example.fast_pedals_frontend.listing.api.ListingServiceImpl
+import com.example.fast_pedals_frontend.listing.ListingViewModel
+import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
+import com.example.fast_pedals_frontend.search.api.SearchApi
+import com.example.fast_pedals_frontend.search.api.SearchService
+import com.example.fast_pedals_frontend.search.api.SearchServiceImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -25,44 +48,90 @@ val appModule = module {
         }
     }
 
-    single<Interceptor>(named("TokenInterceptor")) { TokenInterceptor(get()) }
 
     single(named("Retrofit")) {
 
         val httpInterceptor = HttpLoggingInterceptor()
         httpInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
-        val tokenInterceptor = get<TokenInterceptor>(named("TokenInterceptor"))
-
         val okHttpClientBuilder = OkHttpClient.Builder()
-            .addInterceptor(tokenInterceptor)
+            .addInterceptor(TokenInterceptor(get()))
             .addInterceptor(httpInterceptor)
 
         Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8080/api/")
+            .baseUrl(PHONE_HOTSPOT)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClientBuilder.build())
             .build()
     }
 
-    single(named("AuthApi")) {
+
+    single<AuthApi>(named("AuthApi")) {
         get<Retrofit>(named("Retrofit")).create(AuthApi::class.java)
     }
-
-    single(named("ListingApi")) {
+    single<ListingApi>(named("ListingApi")) {
         get<Retrofit>(named("Retrofit")).create(ListingApi::class.java)
     }
-    single<AuthService> {
-        AuthServiceImpl(get(), get(named("AuthApi")))
+    single<BikeApi>(named("BikeApi")) {
+        get<Retrofit>(named("Retrofit")).create(BikeApi::class.java)
     }
+    single<SearchApi>(named("SearchApi")) {
+        get<Retrofit>(named("Retrofit")).create(SearchApi::class.java)
+    }
+    single<CreateApi>(named("CreateApi")) {
+        get<Retrofit>(named("Retrofit")).create(CreateApi::class.java)
+    }
+    single<EditApi>(named("EditApi")) {
+        get<Retrofit>(named("Retrofit")).create(EditApi::class.java)
+    }
+
+
+    single<AuthService> {
+        AuthServiceImpl(get(named("AuthApi")), get())
+    }
+    single<ListingService> {
+        ListingServiceImpl(get(named("ListingApi")))
+    }
+    single<BikeService> {
+        BikeServiceImpl(get(named("BikeApi")))
+    }
+    single<SearchService> {
+        SearchServiceImpl(get(named("SearchApi")))
+    }
+    single<CreateService> {
+        CreateServiceImpl(get(named("CreateApi")))
+    }
+    single<EditService> {
+        EditServiceImpl(get(named("EditApi")))
+    }
+
+
     viewModel {
-        LogInViewModel(get())
+        LogInViewModel(get<AuthService>())
     }
     viewModel{
-        RegisterViewModel(get())
+        RegisterViewModel(get<AuthService>())
     }
     viewModel {
         SearchViewModel()
+    }
+    viewModel {
+        ListingViewModel(get<ListingService>(), get<SearchService>(), get<SharedCriteriaViewModel>())
+    }
+    viewModel {
+        BikeViewModel(get<BikeService>())
+    }
+    viewModel {
+        SharedCriteriaViewModel()
+    }
+    viewModel {
+        SharedEditViewModel()
+    }
+    viewModel {
+        CreateViewModel(get<CreateService>())
+    }
+    viewModel {
+        EditViewModel(get<EditService>(), get<SharedEditViewModel>())
     }
 
 }
