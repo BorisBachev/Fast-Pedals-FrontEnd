@@ -49,7 +49,6 @@ fun CreateScreen(
 ) {
 
     val createRequest by createViewModel.createRequest.collectAsState()
-    val listingId by createViewModel.listingId.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -280,8 +279,9 @@ fun CreateScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = {
-                                    createViewModel.create()
-                                    listingId?.let { onCreate(it) }
+                                    createViewModel.create { id ->
+                                        onCreate(id)
+                                    }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()

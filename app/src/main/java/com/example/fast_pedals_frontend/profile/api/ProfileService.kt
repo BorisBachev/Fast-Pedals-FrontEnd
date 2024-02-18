@@ -1,6 +1,5 @@
 package com.example.fast_pedals_frontend.profile.api
 
-import com.example.fast_pedals_frontend.listing.api.FavouriteRequest
 import retrofit2.Response
 
 interface ProfileService {

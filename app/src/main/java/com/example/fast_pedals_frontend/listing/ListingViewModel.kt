@@ -4,7 +4,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fast_pedals_frontend.listing.api.FavouriteRequest
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import com.example.fast_pedals_frontend.listing.api.ListingService
 import com.example.fast_pedals_frontend.listing.api.ListingState

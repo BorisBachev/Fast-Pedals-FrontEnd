@@ -31,11 +31,8 @@ class CreateViewModel(
         CreateRequest("", "", 0.0, "", date = LocalDate.now().toString() , listOf("", ""), BikeType.OTHER, BikeBrand.OTHER, "", "", 29, "")
     )
     val createRequest: StateFlow<CreateRequest> get() = _createRequest
-
-    private val _listingId = MutableStateFlow<Long?>(null)
-    val listingId: StateFlow<Long?> = _listingId
-
-    fun create() {
+    
+    fun create(onCreate:(Long) -> Unit) {
         viewModelScope.launch {
 
             val createRequest = _createRequest.value
@@ -43,8 +40,8 @@ class CreateViewModel(
             val response = createService.createListing(createRequest)
 
             if (response.isSuccessful) {
-                _listingId.value =  response.body()?.id
                 _createState.value = CreateState.Success
+                response.body()?.id?.let { onCreate(it) }
             } else {
                 _createState.value = CreateState.Error(response.message())
             }

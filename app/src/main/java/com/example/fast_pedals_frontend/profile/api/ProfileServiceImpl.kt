@@ -1,7 +1,5 @@
 package com.example.fast_pedals_frontend.profile.api
 
-import android.util.Log
-import com.example.fast_pedals_frontend.listing.api.FavouriteRequest
 import retrofit2.Response
 
 class ProfileServiceImpl(
