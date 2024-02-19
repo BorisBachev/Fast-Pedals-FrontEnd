@@ -1,10 +1,14 @@
 package com.example.fast_pedals_frontend
 
+import com.example.fast_pedals_frontend.InterceptorDestinations.LOGIN
+import com.example.fast_pedals_frontend.InterceptorDestinations.REGISTER
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-class TokenInterceptor(private val authSharedPreferences: AuthSharedPreferences) : Interceptor {
+class TokenInterceptor(
+    private val authSharedPreferences: AuthSharedPreferences
+) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
@@ -28,7 +32,7 @@ class TokenInterceptor(private val authSharedPreferences: AuthSharedPreferences)
     }
 
     private fun isLoginOrRegistrationRequest(requestUrl: String): Boolean {
-        return requestUrl.contains("auth")
+        return requestUrl.contains(REGISTER) || requestUrl.contains(LOGIN)
     }
 
 }

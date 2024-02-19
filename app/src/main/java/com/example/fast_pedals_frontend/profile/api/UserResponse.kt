@@ -1,6 +1,6 @@
-package com.example.fast_pedals_frontend.bike.api.response
+package com.example.fast_pedals_frontend.profile.api
 
-class UserResponse (
+data class UserResponse (
 
     val id: Long,
     var name: String,

@@ -19,4 +19,9 @@ object AuthSharedPreferences {
     fun getJwtToken(): String {
         return sharedPreferences.getString(KEY_JWT_TOKEN , "") ?: ""
     }
+
+    fun clearJwtToken() {
+        sharedPreferences.edit().remove(KEY_JWT_TOKEN).apply()
+    }
+
 }

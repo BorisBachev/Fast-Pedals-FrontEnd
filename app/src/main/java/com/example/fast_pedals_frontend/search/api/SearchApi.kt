@@ -22,7 +22,8 @@ interface SearchApi {
         @Query ("model") model: String?,
         @Query ("size") size: String?,
         @Query("wheelSize") wheelSize: Int?,
-        @Query ("frameMaterial") frameMaterial: String?
+        @Query ("frameMaterial") frameMaterial: String?,
+        @Query ("userId") userId: Long?
     ): Response<List<ListingResponse>>
 
 }

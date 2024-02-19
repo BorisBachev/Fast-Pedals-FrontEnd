@@ -35,7 +35,8 @@ class SearchServiceImpl(
             searchCriteria.model,
             searchCriteria.size,
             searchCriteria.wheelSize,
-            searchCriteria.frameMaterial
+            searchCriteria.frameMaterial,
+            searchCriteria.userId
         )
 
         if (response.isSuccessful) {
@@ -44,7 +45,7 @@ class SearchServiceImpl(
             }
         }
 
-        throw Exception("Error: ${response.code()}")
+        return response
 
     }
 

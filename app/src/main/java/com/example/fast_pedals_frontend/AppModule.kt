@@ -1,15 +1,14 @@
 package com.example.fast_pedals_frontend
 
-import com.example.fast_pedals_frontend.RetrofitHost.EMULATOR
 import com.example.fast_pedals_frontend.RetrofitHost.PHONE
 import com.example.fast_pedals_frontend.RetrofitHost.PHONE_HOTSPOT
-import com.example.fast_pedals_frontend.RetrofitHost.PHONE_OFFICE
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.auth.AuthApi
 import com.example.fast_pedals_frontend.auth.AuthService
 import com.example.fast_pedals_frontend.auth.AuthServiceImpl
 import com.example.fast_pedals_frontend.auth.login.LogInViewModel
 import com.example.fast_pedals_frontend.auth.register.RegisterViewModel
+import com.example.fast_pedals_frontend.auth.start.StartViewModel
 import com.example.fast_pedals_frontend.bike.BikeViewModel
 import com.example.fast_pedals_frontend.bike.api.BikeApi
 import com.example.fast_pedals_frontend.bike.api.BikeService
@@ -23,10 +22,19 @@ import com.example.fast_pedals_frontend.edit.SharedEditViewModel
 import com.example.fast_pedals_frontend.edit.api.EditApi
 import com.example.fast_pedals_frontend.edit.api.EditService
 import com.example.fast_pedals_frontend.edit.api.EditServiceImpl
+import com.example.fast_pedals_frontend.firebase.FirebaseViewModel
+import com.example.fast_pedals_frontend.firebase.api.FirebaseApi
+import com.example.fast_pedals_frontend.firebase.api.FirebaseService
+import com.example.fast_pedals_frontend.firebase.api.FirebaseServiceImpl
 import com.example.fast_pedals_frontend.listing.api.ListingApi
 import com.example.fast_pedals_frontend.listing.api.ListingService
 import com.example.fast_pedals_frontend.listing.api.ListingServiceImpl
 import com.example.fast_pedals_frontend.listing.ListingViewModel
+import com.example.fast_pedals_frontend.profile.ProfileViewModel
+import com.example.fast_pedals_frontend.profile.SharedFavouriteViewModel
+import com.example.fast_pedals_frontend.profile.api.ProfileApi
+import com.example.fast_pedals_frontend.profile.api.ProfileService
+import com.example.fast_pedals_frontend.profile.api.ProfileServiceImpl
 import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
 import com.example.fast_pedals_frontend.search.api.SearchApi
 import com.example.fast_pedals_frontend.search.api.SearchService
@@ -59,7 +67,7 @@ val appModule = module {
             .addInterceptor(httpInterceptor)
 
         Retrofit.Builder()
-            .baseUrl(PHONE_HOTSPOT)
+            .baseUrl(PHONE)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClientBuilder.build())
             .build()
@@ -84,6 +92,12 @@ val appModule = module {
     single<EditApi>(named("EditApi")) {
         get<Retrofit>(named("Retrofit")).create(EditApi::class.java)
     }
+    single<ProfileApi>(named("ProfileApi")) {
+        get<Retrofit>(named("Retrofit")).create(ProfileApi::class.java)
+    }
+    single<FirebaseApi>(named("FirebaseApi")) {
+        get<Retrofit>(named("Retrofit")).create(FirebaseApi::class.java)
+    }
 
 
     single<AuthService> {
@@ -104,34 +118,55 @@ val appModule = module {
     single<EditService> {
         EditServiceImpl(get(named("EditApi")))
     }
-
+    single<ProfileService> {
+        ProfileServiceImpl(get(named("ProfileApi")))
+    }
+    single<FirebaseService> {
+        FirebaseServiceImpl(get(named("FirebaseApi")))
+    }
 
     viewModel {
-        LogInViewModel(get<AuthService>())
+        LogInViewModel(get<AuthService>(), get<FirebaseViewModel>())
     }
-    viewModel{
+    viewModel {
         RegisterViewModel(get<AuthService>())
     }
     viewModel {
         SearchViewModel()
     }
     viewModel {
-        ListingViewModel(get<ListingService>(), get<SearchService>(), get<SharedCriteriaViewModel>())
+        ListingViewModel(
+            get<ListingService>(),
+            get<SearchService>(),
+            get<SharedCriteriaViewModel>()
+        )
     }
     viewModel {
-        BikeViewModel(get<BikeService>())
+        BikeViewModel(get<BikeService>(), get<ProfileService>())
     }
     viewModel {
         SharedCriteriaViewModel()
     }
     viewModel {
-        SharedEditViewModel()
+        SharedEditViewModel(get<EditService>())
     }
     viewModel {
         CreateViewModel(get<CreateService>())
     }
     viewModel {
-        EditViewModel(get<EditService>(), get<SharedEditViewModel>())
+        EditViewModel()
+    }
+    viewModel {
+        ProfileViewModel(get<ProfileService>(), get())
+    }
+    viewModel {
+        SharedFavouriteViewModel()
+    }
+    viewModel {
+        FirebaseViewModel(get<FirebaseService>())
+    }
+    viewModel {
+        StartViewModel(get<AuthService>())
     }
 
 }

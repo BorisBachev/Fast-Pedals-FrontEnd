@@ -3,6 +3,7 @@ package com.example.fast_pedals_frontend.listing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,6 +52,7 @@ fun ListingBox(
                     contentScale = ContentScale.Crop
                 )
 
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(text = "Title: ${listing.title}", fontWeight = FontWeight.Bold)
                 Text(text = "Description: ${listing.description}")
                 Text(text = "Price: ${listing.price}")
