@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -102,13 +103,14 @@ fun CreateScreen(
                                     }
                                     DropdownMenu(
                                         modifier = Modifier
-                                            .fillMaxWidth()
+                                            .width(290.dp)
                                             .padding(8.dp),
                                         expanded = isBrandDropdownExpanded,
                                         onDismissRequest = { createViewModel.toggleBrandDropdown() }
                                     ) {
                                         BikeBrand.entries.forEach { brand ->
                                             DropdownMenuItem(
+                                                modifier = Modifier.width(290.dp),
                                                 text = { Text(brand.name) },
                                                 onClick = {
                                                     createViewModel.updateBrand(brand)
@@ -146,13 +148,14 @@ fun CreateScreen(
                                     }
                                     DropdownMenu(
                                         modifier = Modifier
-                                            .fillMaxWidth()
+                                            .width(290.dp)
                                             .padding(8.dp),
                                         expanded = isTypeDropdownExpanded,
                                         onDismissRequest = { createViewModel.toggleTypeDropdown() }
                                     ) {
                                         BikeType.entries.forEach { type ->
                                             DropdownMenuItem(
+                                                modifier = Modifier.width(290.dp),
                                                 text = { Text(type.name) },
                                                 onClick = {
                                                     createViewModel.updateType(type)

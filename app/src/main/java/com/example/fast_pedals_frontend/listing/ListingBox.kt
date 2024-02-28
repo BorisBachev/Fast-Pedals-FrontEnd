@@ -53,7 +53,7 @@ fun ListingBox(
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Title: ${listing.title}", fontWeight = FontWeight.Bold)
+                Text(text = "${listing.title}", fontWeight = FontWeight.Bold)
                 Text(text = "Description: ${listing.description}")
                 Text(text = "Price: ${listing.price}")
                 Text(text = "Location: ${listing.location}")

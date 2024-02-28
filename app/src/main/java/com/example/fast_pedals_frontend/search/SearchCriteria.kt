@@ -6,8 +6,8 @@ import com.example.fast_pedals_frontend.bike.enums.BikeType
 data class SearchCriteria(
 
     val title: String,
-    val minPrice: Double,
-    val maxPrice: Double,
+    val minPrice: Double?,
+    val maxPrice: Double?,
     val location: String,
     val description: String,
     val type: BikeType? = null,

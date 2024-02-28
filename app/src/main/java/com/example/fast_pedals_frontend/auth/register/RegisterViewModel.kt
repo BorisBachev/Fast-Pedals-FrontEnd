@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fast_pedals_frontend.auth.AuthService
+import com.example.fast_pedals_frontend.firebase.FirebaseViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 class RegisterViewModel(
 
     private val authService: AuthService,
+    private val firebaseViewModel: FirebaseViewModel
 
     ): ViewModel() {
 
@@ -45,13 +47,12 @@ class RegisterViewModel(
         viewModelScope.launch {
             _registerState.value = RegisterState.Loading
 
-            var token: String
+            var token = ""
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     token = task.result
-                    println("FCM Token: $token")
                 } else {
-                    println("Failed to retrieve FCM token: ${task.exception}")
+                    _registerState.value = RegisterState.Error("Failed to retrieve FCM token: ${task.exception}")
                 }
             }
 
@@ -59,6 +60,7 @@ class RegisterViewModel(
                 val response = authService.register(name, email, password, fullName, phoneNumber)
                 if (response.isSuccessful) {
                     _registerState.value = RegisterState.Success
+                    firebaseViewModel.updateToken(token)
                 } else {
                     _registerState.value = RegisterState.Error("Registration failed")
                 }

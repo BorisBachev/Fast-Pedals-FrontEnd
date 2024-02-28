@@ -4,12 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SharedFavouriteViewModel(
-
-): ViewModel() {
-
-    private val _profileState = MutableStateFlow<ProfileState>(ProfileState.None)
-    val profileState: StateFlow<ProfileState> = _profileState
+class SharedFavouriteViewModel(): ViewModel() {
 
     private val _isFavourite = MutableStateFlow(false)
     val isFavourite: StateFlow<Boolean> get() = _isFavourite

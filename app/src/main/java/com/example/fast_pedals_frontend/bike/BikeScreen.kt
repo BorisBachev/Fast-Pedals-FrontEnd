@@ -1,6 +1,5 @@
 package com.example.fast_pedals_frontend.bike
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,7 +45,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -59,10 +57,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fast_pedals_frontend.R
-import com.example.fast_pedals_frontend.auth.login.LoginState
-import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
+import com.example.fast_pedals_frontend.bike.api.response.WholeListingResponse
 import com.example.fast_pedals_frontend.edit.SharedEditViewModel
-import com.example.fast_pedals_frontend.profile.api.UserResponse
+import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,33 +71,29 @@ fun BikeScreen(
     onBack: () -> Unit,
     onEdit: (Long) -> Unit,
     onDelete: () -> Unit,
-    sharedEditViewModel: SharedEditViewModel
+    onListingsClick: () -> Unit,
+    sharedEditViewModel: SharedEditViewModel,
+    sharedCriteriaViewModel: SharedCriteriaViewModel
 
 ) {
 
     val state by bikeViewModel.bikeState
-    val listing by bikeViewModel.listing.collectAsState()
-    val bike by bikeViewModel.bike.collectAsState()
-    val ownerInfo by bikeViewModel.ownerInfo.collectAsState()
+    val wholeListing by bikeViewModel.wholeListing.collectAsState()
 
-    LaunchedEffect(listingId) {
-        bikeViewModel.getListing(listingId)
+    val isFavourite = remember { mutableStateOf(false) }
+    val isOwner = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        bikeViewModel.getWholeListing(listingId)
     }
 
-    listing?.let {
-        bikeViewModel.getBike(it.bikeId)
-        bikeViewModel.getUserOwner(it.userId)
+    LaunchedEffect(wholeListing) {
+        isFavourite.value = wholeListing?.isFavourite ?: false
+        isOwner.value = wholeListing?.isOwner ?: false
     }
-    bikeViewModel.getUserInfo()
 
-    val isFavourite by bikeViewModel.isFavourite.collectAsState()
 
-    val isFromUser by bikeViewModel.isFromUser.collectAsState()
-
-    bikeViewModel.isFavourite(listingId)
-    bikeViewModel.isFromUser()
-
-    val iconTint = if (isFavourite == true) Color.Red else Color.White
+    val iconTint = if (isFavourite.value) Color.Red else Color.LightGray
 
     if (state is BikeState.Error) {
         Text(
@@ -112,6 +105,15 @@ fun BikeScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    if (state is BikeState.Loading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+
     FastPedalsFrontEndTheme {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -119,7 +121,7 @@ fun BikeScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = listing?.title ?: "",
+                            text = wholeListing?.title ?: "",
                             style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
                         )
                     },
@@ -131,16 +133,16 @@ fun BikeScreen(
                     actions = {
                         IconButton(
                             onClick = {
-                                if (isFavourite == true) {
+                                if (isFavourite.value) {
                                     bikeViewModel.unFavourite(listingId)
                                 } else {
                                     bikeViewModel.favourite(listingId)
                                 }
-                                bikeViewModel.toggleFavourite()
+                                isFavourite.value = !isFavourite.value
                             }
                         ) {
                             Icon(
-                                imageVector = if (isFavourite == true) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+                                imageVector = if (isFavourite.value) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = null,
                                 tint = iconTint
                             )
@@ -170,7 +172,7 @@ fun BikeScreen(
                     ) {
                         item {
 
-                            val bikeInfo = "${bike?.brand ?: ""} ${bike?.model ?: ""}"
+                            val bikeInfo = "${wholeListing?.brand ?: ""} ${wholeListing?.model ?: ""}"
 
                             Text(
                                 text = bikeInfo,
@@ -185,27 +187,41 @@ fun BikeScreen(
                                 Icon(Icons.Default.Money, contentDescription = null)
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "${listing?.price} USD",
+                                    text = "${wholeListing?.price} USD",
                                     style = TextStyle(fontSize = 16.sp),
                                 )
                             }
 
-                            bike?.let { DetailsBox(bike = it) }
+                            wholeListing?.let { DetailsBox(bike = it) }
 
-                            DescriptionBox(description = listing?.description ?: "")
+                            DescriptionBox(description = wholeListing?.description ?: "")
 
-                            LocationBox(location = listing?.location ?: "")
+                            LocationBox(location = wholeListing?.location ?: "")
 
-                            ownerInfo?.let { ContactInfoBox(contactInfo = it) }
+                            wholeListing?.let { ContactInfoBox(contactInfo = wholeListing!!) }
+
+                            Button(
+                                onClick = {
+                                    sharedCriteriaViewModel.resetSearchCriteria()
+                                    sharedCriteriaViewModel.updateUserId(wholeListing?.userId)
+                                    onListingsClick()
+                                },
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.LocationOn, contentDescription = null)
+                                Text("All from User")
+                            }
 
                         }
                     }
                 }
             },
             bottomBar = {
-                if (isFromUser == true) {
-                    bike?.let {
-                        sharedEditViewModel.setEditRequest(listingId, it, listing!!)
+                if (isOwner.value) {
+                    wholeListing?.let {
+                        sharedEditViewModel.setEditRequest(it)
                     }
                     Column(
                         modifier = Modifier
@@ -258,7 +274,7 @@ fun SwipeableImageGallery(imageResources: List<Int>) {
 }
 
 @Composable
-fun DetailsBox(bike: BikeResponse) {
+fun DetailsBox(bike: WholeListingResponse) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -363,7 +379,7 @@ fun LocationBox(location: String) {
 }
 
 @Composable
-fun ContactInfoBox(contactInfo: UserResponse) {
+fun ContactInfoBox(contactInfo: WholeListingResponse) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

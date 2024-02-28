@@ -43,6 +43,24 @@ class ListingViewModel(
         }
     }
 
+    fun getAllListings() {
+
+        val criteria = SearchCriteria("", 0.0, 10000.0, "", "",
+            null, null, "", "", wheelSize = null, "", userId = null)
+
+        viewModelScope.launch {
+            _listingState.value = ListingState.Loading
+            val response = searchService.search(criteria)
+            if (response.isSuccessful) {
+                _listingState.value = ListingState.Success
+                _listings.value = response.body()
+            } else {
+                _listingState.value = ListingState.Error("An error occurred")
+                _listings.value = null
+            }
+        }
+    }
+
     fun getFavourites() {
         viewModelScope.launch {
             _listingState.value = ListingState.Loading

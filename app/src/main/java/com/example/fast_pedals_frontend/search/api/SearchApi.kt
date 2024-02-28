@@ -1,11 +1,9 @@
 package com.example.fast_pedals_frontend.search.api
 
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
-import com.example.fast_pedals_frontend.listing.api.ListingDestinations
 import com.example.fast_pedals_frontend.search.api.SearchDestinations.SEARCH
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface SearchApi {

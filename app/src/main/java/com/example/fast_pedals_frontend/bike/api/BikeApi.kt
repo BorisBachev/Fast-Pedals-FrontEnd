@@ -6,6 +6,7 @@ import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE_CHEC
 import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE_DELETE
 import com.example.fast_pedals_frontend.bike.api.BikeDestinations.LISTING
 import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
+import com.example.fast_pedals_frontend.bike.api.response.WholeListingResponse
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
 import retrofit2.Response
 import retrofit2.http.DELETE
@@ -21,9 +22,9 @@ interface BikeApi {
     ): BikeResponse
 
     @GET(LISTING)
-    suspend fun getListing(
+    suspend fun getWholeListing(
         @Path("listingId") listingId: Long
-    ): ListingResponse
+    ): Response<WholeListingResponse>
 
     @POST(FAVOURITE_CHECK)
     suspend fun favouriteCheck(

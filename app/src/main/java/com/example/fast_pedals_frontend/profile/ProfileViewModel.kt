@@ -43,6 +43,8 @@ class ProfileViewModel(
 
     fun logout() {
 
+        _profileState.value = ProfileState.Loading
+
         viewModelScope.launch {
 
             try {
