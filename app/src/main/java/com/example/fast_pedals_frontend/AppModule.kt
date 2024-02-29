@@ -1,9 +1,6 @@
 package com.example.fast_pedals_frontend
 
-import com.example.fast_pedals_frontend.RetrofitHost.EMULATOR
 import com.example.fast_pedals_frontend.RetrofitHost.PHONE
-import com.example.fast_pedals_frontend.RetrofitHost.PHONE_HOTSPOT
-import com.example.fast_pedals_frontend.RetrofitHost.PHONE_OFFICE
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.auth.AuthApi
 import com.example.fast_pedals_frontend.auth.AuthService
@@ -69,7 +66,7 @@ val appModule = module {
             .addInterceptor(httpInterceptor)
 
         Retrofit.Builder()
-            .baseUrl(PHONE_OFFICE)
+            .baseUrl(PHONE)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClientBuilder.build())
             .build()
