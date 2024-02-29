@@ -12,6 +12,13 @@ class SharedCriteriaViewModel(): ViewModel() {
         null, null, "", "", wheelSize = null, "", userId = null))
     val searchCriteria: StateFlow<SearchCriteria> get() = _searchCriteria
 
+    private val _isSearch = MutableStateFlow(false)
+    val isSearch: StateFlow<Boolean> get() = _isSearch
+
+    fun updateIsSearch(isSearch: Boolean) {
+        _isSearch.value = isSearch
+    }
+
     fun updateSearchCriteria(newSearchCriteria: SearchCriteria) {
         _searchCriteria.value = newSearchCriteria
     }
@@ -20,11 +27,11 @@ class SharedCriteriaViewModel(): ViewModel() {
         _searchCriteria.value = _searchCriteria.value.copy(title = title)
     }
 
-    fun updateMinPrice(minPrice: Double) {
+    fun updateMinPrice(minPrice: Double?) {
         _searchCriteria.value = _searchCriteria.value.copy(minPrice = minPrice)
     }
 
-    fun updateMaxPrice(maxPrice: Double) {
+    fun updateMaxPrice(maxPrice: Double?) {
         _searchCriteria.value = _searchCriteria.value.copy(maxPrice = maxPrice)
     }
 

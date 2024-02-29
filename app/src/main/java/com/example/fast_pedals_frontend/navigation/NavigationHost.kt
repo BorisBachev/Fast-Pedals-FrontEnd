@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -57,6 +58,7 @@ import com.example.fast_pedals_frontend.profile.SharedFavouriteViewModel
 import com.example.fast_pedals_frontend.search.SearchScreen
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
+import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -85,179 +87,194 @@ fun NavigationHost(navController: NavHostController) {
     }
 
     LaunchedEffect(state) {
-        when {
+        currentRoute = when {
             state == StartState.None || state == StartState.Loading -> {
-                currentRoute = LOADING
+                LOADING
             }
+
             state == StartState.Success && isLogged -> {
-                currentRoute = LISTING
+                LISTING
             }
+
             else -> {
-                currentRoute = WELCOME
+                WELCOME
             }
         }
     }
 
-    Scaffold(
-        bottomBar = {
-            if (shouldShowBottomNavigation(currentRoute)) {
-                BottomNavigation(
-                    modifier = Modifier.height(64.dp),
-                ) {
-                    BottomNavigationItem(
-                        icon = {
-                            Icon(
-                                Icons.Filled.Search,
-                                contentDescription = null,
-                                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
-                            )
-                        },
-                        label = {
-                            Text("Search", modifier = Modifier.padding(top = 8.dp))
-                        },
-                        selected = currentRoute == SEARCH,
-                        onClick = { currentRoute = SEARCH },
-                        selectedContentColor = colorScheme.primary,
-                    )
-                    BottomNavigationItem(
-                        icon = {
-                            Icon(
-                                Icons.AutoMirrored.Filled.List,
-                                contentDescription = null,
-                                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
-                            )
-                        },
-                        label = {
-                            Text("Listing", modifier = Modifier.padding(top = 4.dp))
-                        },
-                        selected = currentRoute == LISTING,
-                        onClick = { currentRoute = LISTING },
-                        selectedContentColor = colorScheme.primary,
-                    )
-                    BottomNavigationItem(
-                        icon = {
-                            Icon(
-                                Icons.Default.FiberNew,
-                                contentDescription = null,
-                                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
-                            )
-                        },
-                        label = {
-                            Text("Create", modifier = Modifier.padding(top = 4.dp))
-                        },
-                        selected = currentRoute == CREATE,
-                        onClick = { currentRoute = CREATE },
-                        selectedContentColor = colorScheme.primary,
-                    )
-                    BottomNavigationItem(
-                        icon = {
-                            Icon(
-                                Icons.Default.Person,
-                                contentDescription = null,
-                                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
-                            )
-                        },
-                        label = {
-                            Text("Profile", modifier = Modifier.padding(top = 4.dp))
-                        },
-                        selected = currentRoute == PROFILE,
-                        onClick = { currentRoute =PROFILE },
-                        selectedContentColor = colorScheme.primary,
-                    )
-                }
-            }
-        },
-        content = { innerPadding ->
-            NavHost(navController, startDestination = LOADING, Modifier.padding(innerPadding)) {
-                composable(WELCOME) {
-                    WelcomeScreen(
-                        toRegister = { currentRoute = REGISTER },
-                        toLogin = { currentRoute = LOGIN }
-                    )
-                }
-                composable(REGISTER) {
-                    RegisterScreen(
-                        registerViewModel = registerViewModel,
-                        onBack = { currentRoute = WELCOME },
-                        onRegisterComplete = { currentRoute = LISTING }
-                    )
-                }
-                composable(LOGIN) {
-                    LoginScreen(
-                        loginViewModel = loginViewModel,
-                        onBack = { currentRoute = WELCOME },
-                        onLoginComplete = { currentRoute = LISTING }
-                    )
-                }
-                composable(LISTING) {
-                    ListingScreen(
-                        listingViewModel = listingViewModel,
-                        sharedCriteriaViewModel = sharedCriteriaViewModel,
-                        onClick = { listingId ->
-                            currentRoute = "$BIKE/$listingId"
-                        },
-                        sharedFavouriteViewModel = favouriteViewModel
-                    )
-                }
-                composable(SEARCH) {
-                    SearchScreen(
-                        searchViewModel = searchViewModel,
-                        sharedCriteriaViewModel = sharedCriteriaViewModel,
-                        onSearch = { currentRoute = LISTING }
-                    )
-                }
-                composable("$BIKE/{listingId}") { backStackEntry ->
-                    val listingId =
-                        backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
-
-                    listingId?.let {
-                        BikeScreen(
-                            bikeViewModel = bikeViewModel,
-                            listingId = it,
-                            onBack = { currentRoute = LISTING },
-                            onEdit = { currentRoute = "$EDIT/$listingId" },
-                            onDelete = { currentRoute = LISTING },
-                            sharedEditViewModel = sharedEditViewModel
+    FastPedalsFrontEndTheme {
+        Scaffold(
+            bottomBar = {
+                if (shouldShowBottomNavigation(currentRoute)) {
+                    BottomNavigation(
+                        modifier = Modifier.height(64.dp),
+                    ) {
+                        BottomNavigationItem(
+                            icon = {
+                                Icon(
+                                    Icons.Filled.Search,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                                )
+                            },
+                            label = {
+                                Text("Search", modifier = Modifier.padding(top = 8.dp),
+                                    color = Color.White
+                                )
+                            },
+                            selected = currentRoute == SEARCH,
+                            onClick = { currentRoute = SEARCH },
+                        )
+                        BottomNavigationItem(
+                            icon = {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.List,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                                )
+                            },
+                            label = {
+                                Text("Listing", modifier = Modifier.padding(top = 4.dp),
+                                    color = Color.White
+                                )
+                            },
+                            selected = currentRoute == LISTING,
+                            onClick = { currentRoute = LISTING },
+                        )
+                        BottomNavigationItem(
+                            icon = {
+                                Icon(
+                                    Icons.Default.FiberNew,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                                )
+                            },
+                            label = {
+                                Text("Create", modifier = Modifier.padding(top = 4.dp),
+                                    color = Color.White
+                                )
+                            },
+                            selected = currentRoute == CREATE,
+                            onClick = { currentRoute = CREATE },
+                        )
+                        BottomNavigationItem(
+                            icon = {
+                                Icon(
+                                    Icons.Default.Person,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                                )
+                            },
+                            label = {
+                                Text("Profile", modifier = Modifier.padding(top = 4.dp),
+                                    color = Color.White
+                                )
+                            },
+                            selected = currentRoute == PROFILE,
+                            onClick = { currentRoute = PROFILE },
                         )
                     }
                 }
-                composable(CREATE) {
-                    CreateScreen(
-                        onCreate = { listingId ->
-                            currentRoute = "$BIKE/$listingId"
-                        },
-                        createViewModel = createViewModel
-                    )
-                }
-                composable("$EDIT/{listingId}") { backStackEntry ->
-                    val listingId =
-                        backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
-
-                    listingId?.let {
-                        EditScreen(
-                            editViewModel = editViewModel,
-                            listingId = it,
-                            onEdit = { currentRoute = LISTING },
-                            sharedEditViewModel = sharedEditViewModel
+            },
+            content = { innerPadding ->
+                NavHost(navController, startDestination = LOADING, Modifier.padding(innerPadding)) {
+                    composable(WELCOME) {
+                        WelcomeScreen(
+                            toRegister = { currentRoute = REGISTER },
+                            toLogin = { currentRoute = LOGIN }
                         )
                     }
-                }
-                composable(PROFILE) {
-                    ProfileScreen(
-                        profileViewModel = profileViewModel,
-                        onListingsClick = { currentRoute = LISTING },
-                        onFavouritesClick = { currentRoute = LISTING },
-                        onLogoutClick = { currentRoute = WELCOME },
-                        sharedFavouriteViewModel = favouriteViewModel,
-                        sharedCriteriaViewModel = sharedCriteriaViewModel
-                    )
-                }
-                composable(LOADING) {
-                    LoadingScreen()
+                    composable(REGISTER) {
+                        RegisterScreen(
+                            registerViewModel = registerViewModel,
+                            onBack = { currentRoute = WELCOME },
+                            onRegisterComplete = { currentRoute = LISTING }
+                        )
+                    }
+                    composable(LOGIN) {
+                        LoginScreen(
+                            loginViewModel = loginViewModel,
+                            onBack = { currentRoute = WELCOME },
+                            onLoginComplete = { currentRoute = LISTING }
+                        )
+                    }
+                    composable(LISTING) {
+                        ListingScreen(
+                            listingViewModel = listingViewModel,
+                            sharedCriteriaViewModel = sharedCriteriaViewModel,
+                            onClick = { listingId ->
+                                currentRoute = "$BIKE/$listingId"
+                            },
+                            sharedFavouriteViewModel = favouriteViewModel
+                        )
+                    }
+                    composable(SEARCH) {
+                        SearchScreen(
+                            searchViewModel = searchViewModel,
+                            sharedCriteriaViewModel = sharedCriteriaViewModel,
+                            onSearch = { currentRoute = LISTING }
+                        )
+                    }
+                    composable("$BIKE/{listingId}") { backStackEntry ->
+                        val listingId =
+                            backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
+
+                        listingId?.let {
+                            BikeScreen(
+                                bikeViewModel = bikeViewModel,
+                                listingId = it,
+                                onBack = { currentRoute = LISTING },
+                                onEdit = { currentRoute = "$EDIT/$listingId" },
+                                onDelete = { currentRoute = LISTING },
+                                onListingsClick = { currentRoute = LISTING },
+                                sharedEditViewModel = sharedEditViewModel,
+                                sharedCriteriaViewModel = sharedCriteriaViewModel
+                            )
+                        }
+                    }
+                    composable(CREATE) {
+                        CreateScreen(
+                            onCreate = { listingId ->
+                                currentRoute = "$BIKE/$listingId"
+                            },
+                            createViewModel = createViewModel
+                        )
+                    }
+                    composable("$EDIT/{listingId}") { backStackEntry ->
+                        val listingId =
+                            backStackEntry.arguments?.getString("listingId")?.toLongOrNull()
+
+                        listingId?.let {
+                            EditScreen(
+                                editViewModel = editViewModel,
+                                listingId = it,
+                                onBack = { currentRoute = "$BIKE/$listingId" },
+                                onEdit = { currentRoute = "$BIKE/$listingId" },
+                                sharedEditViewModel = sharedEditViewModel
+                            )
+                        }
+                    }
+                    composable(PROFILE) {
+                        ProfileScreen(
+                            profileViewModel = profileViewModel,
+                            onListingsClick = { currentRoute = LISTING },
+                            onFavouritesClick = { currentRoute = LISTING },
+                            onLogoutClick = { currentRoute = WELCOME },
+                            sharedFavouriteViewModel = favouriteViewModel,
+                            sharedCriteriaViewModel = sharedCriteriaViewModel
+                        )
+                    }
+                    composable(LOADING) {
+                        LoadingScreen()
+                    }
                 }
             }
-        }
-    )
+        )
+    }
 
     LaunchedEffect(currentRoute) {
         when (currentRoute) {

@@ -3,6 +3,7 @@ package com.example.fast_pedals_frontend.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
+import com.example.fast_pedals_frontend.bike.api.response.WholeListingResponse
 import com.example.fast_pedals_frontend.bike.enums.BikeBrand
 import com.example.fast_pedals_frontend.bike.enums.BikeType
 import com.example.fast_pedals_frontend.edit.api.EditService
@@ -13,59 +14,35 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-class SharedEditViewModel(
-    private val editService: EditService
-): ViewModel() {
+class SharedEditViewModel(): ViewModel() {
 
     private val _editRequest = MutableStateFlow(
         EditRequest(0,"", "", 0.0, "", date = LocalDate.now().toString() , listOf("", ""), BikeType.OTHER, BikeBrand.OTHER, "", "", 29, "", 0)
     )
     val editRequest: StateFlow<EditRequest> get() = _editRequest
 
-    private val _editState = MutableStateFlow<EditState>(EditState.None)
-    val editState: StateFlow<EditState> = _editState
-
-    fun setEditRequest(listingId: Long, bike: BikeResponse, listing: ListingResponse) {
+    fun setEditRequest(wholeListing: WholeListingResponse) {
 
         val editRequest = EditRequest(
-            listingId,
-            listing.title,
-            listing.description,
-            listing.price,
-            listing.location,
+            wholeListing.id,
+            wholeListing.title,
+            wholeListing.description,
+            wholeListing.price,
+            wholeListing.location,
             date = LocalDate.now().toString(),
             listOf("", ""),
-            bike.type,
-            bike.brand,
-            bike.model,
-            bike.size,
-            bike.wheelSize,
-            bike.frameMaterial,
-            bike.id
+            wholeListing.type,
+            wholeListing.brand,
+            wholeListing.model,
+            wholeListing.size,
+            wholeListing.wheelSize,
+            wholeListing.frameMaterial,
+            wholeListing.id
         )
 
         _editRequest.value = editRequest
 
     }
-
-    fun edit() {
-
-        viewModelScope.launch {
-
-            var editRequest = _editRequest.value
-            editRequest = editRequest.copy(bikeId = editRequest.id)
-
-            val response = editService.editListing(editRequest)
-
-            if (response.isSuccessful) {
-                _editState.value = EditState.Success
-            } else {
-                _editState.value = EditState.Error(response.message())
-            }
-
-        }
-    }
-
 
     fun updateEditRequest(newEditRequest: EditRequest) {
         _editRequest.value = newEditRequest

@@ -1,7 +1,7 @@
 package com.example.fast_pedals_frontend.bike.api
 
 import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
-import com.example.fast_pedals_frontend.listing.api.ListingResponse
+import com.example.fast_pedals_frontend.bike.api.response.WholeListingResponse
 import retrofit2.Response
 
 class BikeServiceImpl(
@@ -12,8 +12,8 @@ class BikeServiceImpl(
         return bikeApi.getBike(bikeId)
     }
 
-    override suspend fun getListing(listingId: Long): ListingResponse {
-        return bikeApi.getListing(listingId)
+    override suspend fun getWholeListing(listingId: Long): Response<WholeListingResponse> {
+        return bikeApi.getWholeListing(listingId)
     }
 
     override suspend fun favouriteCheck(listingId: Long): Response<Boolean> {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -31,6 +35,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -109,27 +114,34 @@ fun SearchScreen(
                                     }
                                     DropdownMenu(
                                         modifier = Modifier
-                                            .fillMaxWidth()
+                                            .wrapContentWidth()
                                             .padding(8.dp),
                                         expanded = isBrandDropdownExpanded,
                                         onDismissRequest = { searchViewModel.toggleBrandDropdown() }
                                     ) {
-                                        DropdownMenuItem(
-                                            text = { Text("ALL") },
-                                            onClick = {
-                                                sharedCriteriaViewModel.updateBrand(null)
-                                                searchViewModel.toggleBrandDropdown()
-                                            }
-                                        )
-
-                                        BikeBrand.values().forEach { brand ->
+                                        Column(
+                                            modifier = Modifier
+                                                .width(290.dp)
+                                                .padding(end = 16.dp)
+                                        ) {
                                             DropdownMenuItem(
-                                                text = { Text(brand.name) },
+                                                modifier = Modifier.fillMaxWidth(),
+                                                text = { Text("ALL", modifier = Modifier.padding(start = 16.dp)) },
                                                 onClick = {
-                                                    sharedCriteriaViewModel.updateBrand(brand)
+                                                    sharedCriteriaViewModel.updateBrand(null)
                                                     searchViewModel.toggleBrandDropdown()
                                                 }
                                             )
+                                            BikeBrand.entries.forEach { brand ->
+                                                DropdownMenuItem(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    text = { Text(brand.name, modifier = Modifier.padding(start = 16.dp)) },
+                                                    onClick = {
+                                                        sharedCriteriaViewModel.updateBrand(brand)
+                                                        searchViewModel.toggleBrandDropdown()
+                                                    }
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -161,26 +173,32 @@ fun SearchScreen(
                                     }
                                     DropdownMenu(
                                         modifier = Modifier
-                                            .fillMaxWidth()
+                                            .wrapContentWidth()
                                             .padding(8.dp),
                                         expanded = isTypeDropdownExpanded,
                                         onDismissRequest = { searchViewModel.toggleTypeDropdown() }
                                     ) {
-                                        DropdownMenuItem(
-                                            text = { Text("ALL") },
-                                            onClick = {
-                                                sharedCriteriaViewModel.updateType(null)
-                                                searchViewModel.toggleTypeDropdown()
-                                            }
-                                        )
-                                        BikeType.values().forEach { type ->
+                                        Column(
+                                            modifier = Modifier
+                                                .width(290.dp)
+                                                .padding(end = 8.dp)
+                                        ) {
                                             DropdownMenuItem(
-                                                text = { Text(type.name) },
+                                                text = { Text("ALL") },
                                                 onClick = {
-                                                    sharedCriteriaViewModel.updateType(type)
+                                                    sharedCriteriaViewModel.updateType(null)
                                                     searchViewModel.toggleTypeDropdown()
                                                 }
                                             )
+                                            BikeType.entries.forEach { type ->
+                                                DropdownMenuItem(
+                                                    text = { Text(type.name) },
+                                                    onClick = {
+                                                        sharedCriteriaViewModel.updateType(type)
+                                                        searchViewModel.toggleTypeDropdown()
+                                                    }
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -279,35 +297,54 @@ fun SearchScreen(
                                     .padding(8.dp)
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            RangeSlider(
-                                value = searchCriteria.minPrice.toFloat()..searchCriteria.maxPrice.toFloat(),
-                                steps = 100,
-                                onValueChange = { range ->
-                                    sharedCriteriaViewModel.updateMinPrice(range.start.toDouble())
-                                    sharedCriteriaViewModel.updateMaxPrice(range.endInclusive.toDouble())
+                            OutlinedTextField(
+                                value = searchCriteria.minPrice?.toString() ?: "",
+                                onValueChange = { newValue ->
+                                    if (newValue.isEmpty() || newValue == "0" || newValue == "0." || newValue == "0.0") {
+                                        sharedCriteriaViewModel.updateMinPrice(null)
+                                    } else {
+                                        val newPrice = newValue.toDoubleOrNull()
+                                        sharedCriteriaViewModel.updateMinPrice(newPrice)
+                                    }
                                 },
-                                valueRange = 0f..10000f,
+                                label = { Text("Min Price") },
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next
+                                ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Min Price: ${searchCriteria.minPrice.roundTo(2)}, Max Price: ${
-                                    searchCriteria.maxPrice.roundTo(
-                                        2
-                                    )
-                                }",
-                                modifier = Modifier.padding(8.dp)
+                            OutlinedTextField(
+                                value = searchCriteria.maxPrice?.toString() ?: "",
+                                onValueChange = { newValue ->
+                                    if (newValue.isEmpty() || newValue == "0" || newValue == "0." || newValue == "0.0") {
+                                        sharedCriteriaViewModel.updateMaxPrice(null)
+                                    } else {
+                                        val newPrice = newValue.toDoubleOrNull()
+                                        sharedCriteriaViewModel.updateMaxPrice(newPrice)
+                                    }
+                                },
+                                label = { Text("Max Price") },
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = {
+                                    sharedCriteriaViewModel.updateIsSearch(true)
                                     onSearch()
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp)) {
+                                    .padding(8.dp)
+                            ) {
                                 Text("Search")
                             }
                         }

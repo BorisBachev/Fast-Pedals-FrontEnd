@@ -1,5 +1,6 @@
 package com.example.fast_pedals_frontend.profile
 
+import android.hardware.lights.Light
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,15 +22,18 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonOutline
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,13 +49,29 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit,
     sharedFavouriteViewModel: SharedFavouriteViewModel,
     sharedCriteriaViewModel: SharedCriteriaViewModel
+
 ) {
 
-    val profileState by sharedFavouriteViewModel.profileState.collectAsState()
+    val profileState by profileViewModel.profileState.collectAsState()
 
     val userInfo by profileViewModel.userInfo.collectAsState()
 
-    profileViewModel.getUserByEmail()
+    LaunchedEffect(Unit) {
+        profileViewModel.getUserByEmail()
+    }
+
+    if (profileState == ProfileState.Loading) {
+        FastPedalsFrontEndTheme {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.height(200.dp))
+                CircularProgressIndicator()
+            }
+        }
+    }
 
     FastPedalsFrontEndTheme {
         LazyColumn {

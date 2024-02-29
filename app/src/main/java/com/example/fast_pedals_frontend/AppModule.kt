@@ -1,7 +1,9 @@
 package com.example.fast_pedals_frontend
 
+import com.example.fast_pedals_frontend.RetrofitHost.EMULATOR
 import com.example.fast_pedals_frontend.RetrofitHost.PHONE
 import com.example.fast_pedals_frontend.RetrofitHost.PHONE_HOTSPOT
+import com.example.fast_pedals_frontend.RetrofitHost.PHONE_OFFICE
 import com.example.fast_pedals_frontend.search.SearchViewModel
 import com.example.fast_pedals_frontend.auth.AuthApi
 import com.example.fast_pedals_frontend.auth.AuthService
@@ -67,7 +69,7 @@ val appModule = module {
             .addInterceptor(httpInterceptor)
 
         Retrofit.Builder()
-            .baseUrl(PHONE)
+            .baseUrl(PHONE_OFFICE)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClientBuilder.build())
             .build()
@@ -129,7 +131,7 @@ val appModule = module {
         LogInViewModel(get<AuthService>(), get<FirebaseViewModel>())
     }
     viewModel {
-        RegisterViewModel(get<AuthService>())
+        RegisterViewModel(get<AuthService>(), get<FirebaseViewModel>())
     }
     viewModel {
         SearchViewModel()
@@ -142,19 +144,19 @@ val appModule = module {
         )
     }
     viewModel {
-        BikeViewModel(get<BikeService>(), get<ProfileService>())
+        BikeViewModel(get<BikeService>())
     }
     viewModel {
         SharedCriteriaViewModel()
     }
     viewModel {
-        SharedEditViewModel(get<EditService>())
+        SharedEditViewModel()
     }
     viewModel {
         CreateViewModel(get<CreateService>())
     }
     viewModel {
-        EditViewModel()
+        EditViewModel(get<EditService>())
     }
     viewModel {
         ProfileViewModel(get<ProfileService>(), get())
@@ -166,7 +168,7 @@ val appModule = module {
         FirebaseViewModel(get<FirebaseService>())
     }
     viewModel {
-        StartViewModel(get<AuthService>())
+        StartViewModel(get<AuthService>(), get<FirebaseViewModel>())
     }
 
 }
