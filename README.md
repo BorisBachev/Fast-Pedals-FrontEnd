@@ -68,7 +68,6 @@ Koin
 Retrofit
 Material3
 Firebase
-
 ```
 -[Backend API](https://github.com/BorisBachev/Fast-Pedals)
 
