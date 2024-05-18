@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.example.fast_pedals_frontend.auth.login.LoginState
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,12 +41,17 @@ fun RegisterScreen(
     val password by registerViewModel.password.collectAsState()
     val fullName by registerViewModel.fullName.collectAsState()
     val phoneNumber by registerViewModel.phoneNumber.collectAsState()
+
+    val emailError by registerViewModel.emailError.collectAsState()
+    val passwordError by registerViewModel.passwordError.collectAsState()
+    val fullNameError by registerViewModel.fullNameError.collectAsState()
+    val phoneNumberError by registerViewModel.phoneNumberError.collectAsState()
+
     var passwordVisibility by remember { mutableStateOf(false) }
 
     val registerState by registerViewModel.registerState
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     val strings = RegisterScreenText()
 
@@ -85,14 +89,17 @@ fun RegisterScreen(
                         value = email,
                         onValueChange = { registerViewModel.updateEmail(it) },
                         label = { Text(strings.email) },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Email,
-                            imeAction = ImeAction.Next
-                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
+                    emailError?.let { error ->
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
                     OutlinedTextField(
                         value = password,
                         onValueChange = { registerViewModel.updatePassword(it) },
@@ -116,6 +123,13 @@ fun RegisterScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
+                    passwordError?.let { error ->
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
                     OutlinedTextField(
                         value = fullName,
                         onValueChange = { registerViewModel.updateFullName(it) },
@@ -127,6 +141,13 @@ fun RegisterScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
+                    fullNameError?.let { error ->
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
                     OutlinedTextField(
                         value = phoneNumber,
                         onValueChange = { registerViewModel.updatePhoneNumber(it) },
@@ -139,6 +160,13 @@ fun RegisterScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
+                    phoneNumberError?.let { error ->
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
                     Button(
                         onClick = {
 

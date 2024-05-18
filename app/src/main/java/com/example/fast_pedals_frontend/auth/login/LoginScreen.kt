@@ -29,7 +29,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.ImeAction
@@ -48,12 +47,15 @@ fun LoginScreen(
 
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
+
+    val emailError by loginViewModel.emailError.collectAsState()
+    val passwordError by loginViewModel.passwordError.collectAsState()
+
     var passwordVisibility by remember { mutableStateOf(false) }
 
     val state by loginViewModel.loginState.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     FastPedalsFrontEndTheme {
 
@@ -89,6 +91,13 @@ fun LoginScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
+                    emailError?.let { error ->
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
                     OutlinedTextField(
                         value = password,
                         onValueChange = { loginViewModel.updatePassword(it) },
@@ -112,6 +121,13 @@ fun LoginScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
+                    passwordError?.let { error ->
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
                     Button(
                         onClick = {
 
