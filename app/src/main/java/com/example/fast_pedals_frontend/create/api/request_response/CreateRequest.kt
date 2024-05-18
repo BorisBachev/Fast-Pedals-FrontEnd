@@ -10,7 +10,7 @@ data class CreateRequest (
         val price: Double?,
         val location: String,
         val date: String? = null,
-        val images: List<String>,
+        val images: List<String?> = listOf(""),
         val type: BikeType,
         val brand: BikeBrand,
         val model: String,

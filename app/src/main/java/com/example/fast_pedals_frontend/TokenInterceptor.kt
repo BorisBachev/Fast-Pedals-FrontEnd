@@ -32,7 +32,7 @@ class TokenInterceptor(
     }
 
     private fun isLoginOrRegistrationRequest(requestUrl: String): Boolean {
-        return requestUrl.contains(REGISTER) || requestUrl.contains(LOGIN)
+        return requestUrl.contains(REGISTER) || requestUrl.contains(LOGIN) || requestUrl.contains("fast-pedals-s3")
     }
 
 }

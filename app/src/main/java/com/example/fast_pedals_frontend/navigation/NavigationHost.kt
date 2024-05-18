@@ -232,7 +232,8 @@ fun NavigationHost(navController: NavHostController) {
                                 onDelete = { currentRoute = LISTING },
                                 onListingsClick = { currentRoute = LISTING },
                                 sharedEditViewModel = sharedEditViewModel,
-                                sharedCriteriaViewModel = sharedCriteriaViewModel
+                                sharedCriteriaViewModel = sharedCriteriaViewModel,
+                                listingViewModel = listingViewModel
                             )
                         }
                     }

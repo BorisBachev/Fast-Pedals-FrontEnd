@@ -51,16 +51,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.fast_pedals_frontend.R
 import com.example.fast_pedals_frontend.bike.api.response.WholeListingResponse
 import com.example.fast_pedals_frontend.edit.SharedEditViewModel
+import com.example.fast_pedals_frontend.listing.ListingViewModel
 import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +78,8 @@ fun BikeScreen(
     onDelete: () -> Unit,
     onListingsClick: () -> Unit,
     sharedEditViewModel: SharedEditViewModel,
-    sharedCriteriaViewModel: SharedCriteriaViewModel
+    sharedCriteriaViewModel: SharedCriteriaViewModel,
+    listingViewModel: ListingViewModel
 
 ) {
 
@@ -82,6 +88,8 @@ fun BikeScreen(
 
     val isFavourite = remember { mutableStateOf(false) }
     val isOwner = remember { mutableStateOf(false) }
+    val shouldShowImages = wholeListing?.images?.isNotEmpty() ?: false &&
+            wholeListing?.images?.all { it.isNotBlank() } ?: false
 
     LaunchedEffect(Unit) {
         bikeViewModel.getWholeListing(listingId)
@@ -91,7 +99,6 @@ fun BikeScreen(
         isFavourite.value = wholeListing?.isFavourite ?: false
         isOwner.value = wholeListing?.isOwner ?: false
     }
-
 
     val iconTint = if (isFavourite.value) Color.Red else Color.LightGray
 
@@ -113,6 +120,14 @@ fun BikeScreen(
             CircularProgressIndicator()
         }
     }
+
+    val context = LocalContext.current
+
+    wholeListing?.let { listingViewModel.fetchMultipleImages(context, it.images) }
+
+    val imageFiles by listingViewModel.imageFiles.collectAsState()
+
+    val images = imageFiles.filterKeys { it in (wholeListing?.images ?: emptyList()) }
 
     FastPedalsFrontEndTheme {
         Scaffold(
@@ -156,13 +171,12 @@ fun BikeScreen(
                         .fillMaxSize()
                         .padding(padding)
                 ) {
-                    val imageResources = listOf(
-                        R.drawable.cruz,
-                        R.drawable.cruz,
-                        R.drawable.cruz
-                    )
 
-                    SwipeableImageGallery(imageResources = imageResources)
+                    if (shouldShowImages) {
+                        wholeListing?.let { SwipeableImageGallery(it.images, images) }
+                    } else {
+                        PlaceholderImage()
+                    }
 
                     LazyColumn(
                         state = rememberLazyListState(),
@@ -231,8 +245,9 @@ fun BikeScreen(
                     ) {
                         Button(
                             onClick = {
-                                bikeViewModel.deleteListing()
-                                onDelete()
+                                bikeViewModel.deleteListing {
+                                    onDelete()
+                                }
                                       },
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -240,7 +255,10 @@ fun BikeScreen(
                         }
 
                         Button(
-                            onClick = { onEdit(listingId) },
+                            onClick = {
+                                bikeViewModel.resetState()
+                                onEdit(listingId)
+                                      },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Edit Listing")
@@ -248,14 +266,14 @@ fun BikeScreen(
                     }
                 }
             }
-            )
-        }
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SwipeableImageGallery(imageResources: List<Int>) {
-    val pagerState = rememberPagerState(pageCount = { imageResources.size })
+fun SwipeableImageGallery(imageKeys: List<String>, imageFiles: Map<String, File>) {
+    val pagerState = rememberPagerState(pageCount = { imageKeys.size })
 
     HorizontalPager(
         state = pagerState,
@@ -263,14 +281,31 @@ fun SwipeableImageGallery(imageResources: List<Int>) {
             .fillMaxWidth()
             .height(200.dp)
     ) { page ->
-        Image(
-            painter = painterResource(id = imageResources[page]),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(MaterialTheme.shapes.medium)
-        )
+        val imageKey = imageKeys.getOrNull(page)
+        val imageFile = imageKey?.let { imageFiles[it] }
+        if (imageFile != null) {
+            Image(
+                painter = rememberAsyncImagePainter(imageFile),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(MaterialTheme.shapes.medium)
+            )
+        }
     }
+}
+
+@Composable
+fun PlaceholderImage() {
+    val placeholderPainter = painterResource(id = R.drawable.placeholder_bike)
+    Image(
+        painter = placeholderPainter,
+        contentDescription = null,
+        modifier = Modifier.fillMaxWidth().height(200.dp)
+            .fillMaxSize()
+            .clip(MaterialTheme.shapes.medium),
+        contentScale = ContentScale.Crop
+    )
 }
 
 @Composable

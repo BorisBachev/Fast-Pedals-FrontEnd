@@ -6,7 +6,7 @@ data class ListingResponse (
     val description: String,
     val price: Double,
     val location: String,
-    val image: String,
+    val images: List<String>,
     val bikeId: Long,
     val userId: Long
 )
