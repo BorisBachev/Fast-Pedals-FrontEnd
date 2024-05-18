@@ -74,16 +74,21 @@ class BikeViewModel(
 
     }
 
-    fun deleteListing() {
+    fun deleteListing(onSuccess: () -> Unit) {
         viewModelScope.launch {
             _bikeState.value = BikeState.Loading
             try {
                 _wholeListing.value?.let { bikeService.deleteListing(it.id) }
                 _bikeState.value = BikeState.Success
+                onSuccess()
             } catch (e: Exception) {
                 _bikeState.value = BikeState.Error(ERROR_MESSAGE)
             }
         }
+    }
+
+    fun resetState() {
+        _bikeState.value = BikeState.None
     }
 
 }

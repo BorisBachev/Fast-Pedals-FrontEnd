@@ -30,7 +30,7 @@ class SharedEditViewModel(): ViewModel() {
             wholeListing.price,
             wholeListing.location,
             date = LocalDate.now().toString(),
-            listOf("", ""),
+            wholeListing.images,
             wholeListing.type,
             wholeListing.brand,
             wholeListing.model,

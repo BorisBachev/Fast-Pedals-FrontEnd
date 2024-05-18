@@ -5,6 +5,7 @@ import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE
 import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE_CHECK
 import com.example.fast_pedals_frontend.bike.api.BikeDestinations.FAVOURITE_DELETE
 import com.example.fast_pedals_frontend.bike.api.BikeDestinations.LISTING
+import com.example.fast_pedals_frontend.bike.api.BikeDestinations.LISTING_DELETE
 import com.example.fast_pedals_frontend.bike.api.response.BikeResponse
 import com.example.fast_pedals_frontend.bike.api.response.WholeListingResponse
 import com.example.fast_pedals_frontend.listing.api.ListingResponse
@@ -41,7 +42,7 @@ interface BikeApi {
         @Path("listingId") listingId: Long
     ): Response<Unit>
 
-    @DELETE(LISTING)
+    @DELETE(LISTING_DELETE)
     suspend fun deleteListing(
         @Path("listingId") listingId: Long
     ): Response<Unit>

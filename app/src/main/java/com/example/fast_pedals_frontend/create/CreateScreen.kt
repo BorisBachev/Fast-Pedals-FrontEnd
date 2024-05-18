@@ -1,5 +1,12 @@
 package com.example.fast_pedals_frontend.create
 
+import android.content.Context
+import android.net.Uri
+import android.provider.OpenableColumns
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,16 +18,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -32,15 +43,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.example.fast_pedals_frontend.bike.enums.BikeBrand
 import com.example.fast_pedals_frontend.bike.enums.BikeType
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,13 +66,38 @@ fun CreateScreen(
     createViewModel: CreateViewModel
 ) {
 
+    val createState by createViewModel.createState.collectAsState()
+
     val createRequest by createViewModel.createRequest.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     val isBrandDropdownExpanded by createViewModel.isBrandDropdownExpanded.collectAsState()
     val isTypeDropdownExpanded by createViewModel.isTypeDropdownExpanded.collectAsState()
+    val isEditingImages by createViewModel.isEditingImages.collectAsState()
+    val areImagesPicked by createViewModel.areImagesPicked.collectAsState()
+
+    val imageUris by createViewModel.imageUris.collectAsState()
+    val context = LocalContext.current
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = { uris ->
+
+            if(areImagesPicked) {
+                if(isEditingImages) {
+                    createViewModel.updateImageUris(imageUris + uris)
+                    createViewModel.toggleEditingImages()
+                } else {
+                    createViewModel.updateImageUris(uris)
+                }
+            } else {
+                createViewModel.updateImageUris(uris)
+                createViewModel.toggleImagesPicked()
+            }
+
+        }
+    )
 
     FastPedalsFrontEndTheme {
         Scaffold(
@@ -279,10 +321,81 @@ fun CreateScreen(
                                     .fillMaxWidth()
                                     .padding(8.dp)
                             )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            if (areImagesPicked) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Button(
+                                        onClick = {
+                                            createViewModel.toggleEditingImages()
+                                            imagePickerLauncher.launch(
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                            )
+                                        },
+                                    ) {
+                                        Text("Add Images")
+                                    }
+                                    Button(
+                                        onClick = {
+                                            imagePickerLauncher.launch(
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                            )
+                                        }
+                                    ) {
+                                        Text("Change Images")
+                                    }
+                                }
+                            } else {
+                                Button(
+                                    onClick = {
+                                        imagePickerLauncher.launch(
+                                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                ) {
+                                    Text("Select Images")
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            imageUris.chunked(3).forEach { rowUris ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    rowUris.forEach { uri ->
+                                        Image(
+                                            painter = rememberAsyncImagePainter(uri),
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(120.dp)
+                                                .padding(4.dp)
+                                                .clip(shape = RoundedCornerShape(4.dp))
+                                        )
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                color = Color.Gray,
+                                thickness = 1.dp
+                            )
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = {
-                                    createViewModel.create { id ->
+
+                                    val files = imageUris.mapNotNull { uri ->
+                                        uriToFile(context, uri)
+                                    }
+
+                                    createViewModel.create(files) { id ->
                                         onCreate(id)
                                     }
                                 },
@@ -293,9 +406,74 @@ fun CreateScreen(
                                 Text("Create Listing")
                             }
                         }
+
+                        if (createState is CreateState.Error) {
+                            item {
+                                Text(
+                                    (createState as CreateState.Error).message,
+                                    color = Color.Red,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                        }
+
+                        if (createState is CreateState.Loading) {
+                            item {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+
                     }
                 }
             }
         )
     }
+}
+
+fun uriToFile(context: Context, uri: Uri): File? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val fileName = getFileName(context, uri)
+        val tempFile = File(context.cacheDir, fileName)
+        tempFile.deleteOnExit()
+        inputStream?.use { input ->
+            FileOutputStream(tempFile).use { output ->
+                input.copyTo(output)
+            }
+        }
+        tempFile
+    } catch (e: IOException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+private fun getFileName(context: Context, uri: Uri): String {
+    var result: String? = null
+    if (uri.scheme == "content") {
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val displayNameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                result = if (displayNameIndex != -1) {
+                    it.getString(displayNameIndex)
+                } else {
+                    "image"
+                }
+            }
+        }
+    }
+    if (result == null) {
+        result = uri.path
+        val cut = result?.lastIndexOf('/')
+        if (cut != null && cut != -1) {
+            result = result?.substring(cut + 1)
+        }
+    }
+    return result ?: "temp_image"
 }
