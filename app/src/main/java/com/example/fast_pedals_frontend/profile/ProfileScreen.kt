@@ -1,7 +1,5 @@
 package com.example.fast_pedals_frontend.profile
 
-import android.hardware.lights.Light
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,10 +31,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fast_pedals_frontend.R
 import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 
@@ -87,7 +86,7 @@ fun ProfileScreen(
                     ) {
                         Icon(
                             Icons.Default.Person,
-                            contentDescription = "Profile Picture",
+                            contentDescription = stringResource(id = R.string.profile_picture),
                             modifier = Modifier
                                 .size(96.dp)
                                 .padding(bottom = 8.dp)
@@ -106,10 +105,11 @@ fun ProfileScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                                 ) {
-                                    Icon(Icons.Default.PersonOutline, contentDescription = "Name")
+                                    Icon(Icons.Default.PersonOutline, contentDescription = stringResource(
+                                        id = R.string.name_label))
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Name: ${userInfo?.name}",
+                                        text = stringResource(id = R.string.name_label) + ": ${userInfo?.name}",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 18.sp
                                     )
@@ -126,10 +126,10 @@ fun ProfileScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                                 ) {
-                                    Icon(Icons.Default.Email, contentDescription = "Email")
+                                    Icon(Icons.Default.Email, contentDescription = stringResource(id = R.string.email_label))
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Email: ${userInfo?.email}",
+                                        text = stringResource(id = R.string.email_label) + ": ${userInfo?.email}",
                                         fontSize = 16.sp
                                     )
                                 }
@@ -145,10 +145,11 @@ fun ProfileScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                                 ) {
-                                    Icon(Icons.Default.PersonOutline, contentDescription = "Full Name")
+                                    Icon(Icons.Default.PersonOutline, contentDescription = stringResource(
+                                        id = R.string.full_name_label))
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Full Name: ${userInfo?.fullName}",
+                                        text = stringResource(id = R.string.full_name_label) + ": ${userInfo?.fullName}",
                                         fontSize = 16.sp
                                     )
                                 }
@@ -164,10 +165,10 @@ fun ProfileScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                                 ) {
-                                    Icon(Icons.Default.Phone, contentDescription = "Phone Number")
+                                    Icon(Icons.Default.Phone, contentDescription = stringResource(id = R.string.phone_number_label))
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Phone Number: ${userInfo?.phoneNumber}",
+                                        text = stringResource(id = R.string.phone_number_label) + ": ${userInfo?.phoneNumber}",
                                         fontSize = 16.sp
                                     )
                                 }
@@ -184,7 +185,7 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Icon(Icons.Default.LocationOn, contentDescription = null)
-                        Text("Listings")
+                        Text(stringResource(id = R.string.listings_button_label))
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
@@ -195,7 +196,7 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Icon(Icons.Default.Favorite, contentDescription = null)
-                        Text("Favorites")
+                        Text(stringResource(id = R.string.favorites_button_label))
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
@@ -206,7 +207,7 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
-                        Text("Logout")
+                        Text(stringResource(id = R.string.logout_button_label))
                     }
                 }
             }

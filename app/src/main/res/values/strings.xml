@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Fast-Pedals-FrontEnd</string>
+    <string name="profile_picture" description="Profile Picture">Profile Picture</string>
+    <string name="name_label" description="Name">Name</string>
+    <string name="email_label" description="Email">Email</string>
+    <string name="full_name_label" description="Full Name">Full Name</string>
+    <string name="phone_number_label" description="Phone Number">Phone Number</string>
+    <string name="listings_button_label" description="Listings">Listings</string>
+    <string name="favorites_button_label" description="Favorites">Favorites</string>
+    <string name="logout_button_label" description="Logout">Logout</string>
 </resources>

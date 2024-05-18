@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Fast-Pedals-FrontEnd</string>
+    <string name="profile_picture" description="Profile Picture">Профилна Снимка</string>
+    <string name="name_label" description="Name">Потребителско име</string>
+    <string name="email_label" description="Email">Имейл</string>
+    <string name="full_name_label" description="Full Name">Пълно Име</string>
+    <string name="phone_number_label" description="Phone Number">Телефонен номер</string>
+    <string name="listings_button_label" description="Listings">Обяви</string>
+    <string name="favorites_button_label" description="Favorites">Любими</string>
+    <string name="logout_button_label" description="Logout">Изход</string>
+</resources>
