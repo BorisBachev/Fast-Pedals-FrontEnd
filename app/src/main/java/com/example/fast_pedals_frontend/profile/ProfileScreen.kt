@@ -179,7 +179,8 @@ fun ProfileScreen(
                     Button(
                         onClick = {
                             sharedCriteriaViewModel.resetSearchCriteria()
-                            sharedCriteriaViewModel.updateUserId(userId = userInfo?.id ?: 0L)
+                            sharedCriteriaViewModel.updateUserId(userId = userInfo?.id)
+                            sharedCriteriaViewModel.updateIsSearch(true)
                             onListingsClick()
                         },
                         modifier = Modifier.fillMaxWidth(),

@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.example.fast_pedals_frontend.imageStorage.ImageViewModel
 import com.example.fast_pedals_frontend.listing.api.ListingState
 import com.example.fast_pedals_frontend.profile.SharedFavouriteViewModel
 import com.example.fast_pedals_frontend.search.SharedCriteriaViewModel
@@ -27,7 +28,8 @@ fun ListingScreen(
     listingViewModel: ListingViewModel,
     sharedCriteriaViewModel: SharedCriteriaViewModel,
     sharedFavouriteViewModel: SharedFavouriteViewModel,
-    onClick: (Long) -> Unit
+    imageViewModel: ImageViewModel,
+    onClick: (Long) -> Unit,
 ) {
 
     val listingState by listingViewModel.listingState
@@ -38,7 +40,7 @@ fun ListingScreen(
 
     val context = LocalContext.current
 
-    LaunchedEffect(Unit){
+    //LaunchedEffect(Unit){
         if(isFavourite.value) {
             sharedCriteriaViewModel.resetSearchCriteria()
             listingViewModel.getFavourites()
@@ -47,27 +49,28 @@ fun ListingScreen(
         } else {
             listingViewModel.getAllListings()
         }
-    }
+    //}
 
     LaunchedEffect(listings) {
         listings?.let {
-            listingViewModel.fetchAllFirstImages(context)
+            imageViewModel.fetchAllFirstImages(context, it)
         }
     }
 
     var listingBoxClicked by remember { mutableStateOf(false) }
 
-    val imageFiles by listingViewModel.imageFiles.collectAsState()
+    val imageFiles by imageViewModel.imageFiles.collectAsState()
 
     FastPedalsFrontEndTheme {
-        if (listingState == ListingState.Loading) {
+        /*if (listingState == ListingState.Loading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
-        } else if (listings?.isEmpty() == true) {
+        } else*/
+            if (listings?.isEmpty() == true) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -82,13 +85,13 @@ fun ListingScreen(
                     val imageKey = listing.images.firstOrNull()
                     val imageFile = imageFiles[imageKey]
                     val hasImage = imageKey != null
-
                     ListingBox(
                         listing = listing,
                         imageFile = imageFile,
                         hasImage = hasImage,
                         onClick = {
                             listingBoxClicked = true
+                            listingViewModel.resetListings()
                             onClick(listing.id)
                         }
                     )
@@ -97,12 +100,12 @@ fun ListingScreen(
         }
     }
 
-    DisposableEffect(listingBoxClicked) {
+    DisposableEffect(Unit) {
         onDispose {
-            if (!listingBoxClicked) {
-                sharedFavouriteViewModel.setIsFavourite(false)
-                sharedCriteriaViewModel.updateIsSearch(false)
-            }
+            sharedCriteriaViewModel.updateIsSearch(false)
+            sharedFavouriteViewModel.setIsFavourite(false)
+            listingViewModel.resetListings()
         }
     }
+
 }

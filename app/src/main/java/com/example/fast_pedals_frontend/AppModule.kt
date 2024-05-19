@@ -25,6 +25,10 @@ import com.example.fast_pedals_frontend.firebase.FirebaseViewModel
 import com.example.fast_pedals_frontend.firebase.api.FirebaseApi
 import com.example.fast_pedals_frontend.firebase.api.FirebaseService
 import com.example.fast_pedals_frontend.firebase.api.FirebaseServiceImpl
+import com.example.fast_pedals_frontend.imageStorage.ImageViewModel
+import com.example.fast_pedals_frontend.imageStorage.api.ImageApi
+import com.example.fast_pedals_frontend.imageStorage.api.ImageService
+import com.example.fast_pedals_frontend.imageStorage.api.ImageServiceImpl
 import com.example.fast_pedals_frontend.listing.api.ListingApi
 import com.example.fast_pedals_frontend.listing.api.ListingService
 import com.example.fast_pedals_frontend.listing.api.ListingServiceImpl
@@ -97,6 +101,9 @@ val appModule = module {
     single<FirebaseApi>(named("FirebaseApi")) {
         get<Retrofit>(named("Retrofit")).create(FirebaseApi::class.java)
     }
+    single<ImageApi>(named("ImageApi")) {
+        get<Retrofit>(named("Retrofit")).create(ImageApi::class.java)
+    }
 
 
     single<AuthService> {
@@ -122,6 +129,9 @@ val appModule = module {
     }
     single<FirebaseService> {
         FirebaseServiceImpl(get(named("FirebaseApi")))
+    }
+    single<ImageService> {
+        ImageServiceImpl(get(named("ImageApi")))
     }
 
     viewModel {
@@ -150,10 +160,10 @@ val appModule = module {
         SharedEditViewModel()
     }
     viewModel {
-        CreateViewModel(get<CreateService>())
+        CreateViewModel(get<CreateService>(), get<ImageViewModel>())
     }
     viewModel {
-        EditViewModel(get<EditService>())
+        EditViewModel(get<EditService>(), get<ImageViewModel>())
     }
     viewModel {
         ProfileViewModel(get<ProfileService>(), get())
@@ -166,6 +176,9 @@ val appModule = module {
     }
     viewModel {
         StartViewModel(get<AuthService>(), get<FirebaseViewModel>())
+    }
+    viewModel {
+        ImageViewModel(get<ImageService>())
     }
 
 }

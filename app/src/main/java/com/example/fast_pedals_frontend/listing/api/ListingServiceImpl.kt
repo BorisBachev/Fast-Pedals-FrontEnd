@@ -13,12 +13,4 @@ class ListingServiceImpl(
         return listingApi.getFavourites()
     }
 
-    override suspend fun generatePresignedDownloadUrl(it: String): Response<PresignedResponse> {
-        return listingApi.getImageLink(it)
-    }
-
-    override suspend fun downloadImage(imageUrl: String): Response<ResponseBody> {
-        return listingApi.downloadImage(imageUrl)
-    }
-
 }

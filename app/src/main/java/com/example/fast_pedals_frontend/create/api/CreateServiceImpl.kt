@@ -19,20 +19,4 @@ class CreateServiceImpl(
         return createApi.createListing(createRequest)
     }
 
-    override suspend fun generatePresignedUploadUrl(
-        key: String,
-        contentType: String
-    ): Response<PresignedResponse> {
-        return createApi.generatePresignedUploadUrl(key, contentType)
-    }
-
-    override suspend fun uploadImage(
-        presignedUrl: String,
-        image: ByteArray,
-        contentType: String
-    ): Response<Unit> {
-        val requestBody = image.toRequestBody(contentType.toMediaTypeOrNull())
-        return createApi.uploadImage(presignedUrl, requestBody)
-    }
-
 }

@@ -99,4 +99,6 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.20.3")
+
 }

@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.fast_pedals_frontend.bike.enums.BikeBrand
 import com.example.fast_pedals_frontend.bike.enums.BikeType
+import com.example.fast_pedals_frontend.imageStorage.ImageViewModel
 import com.example.fast_pedals_frontend.ui.theme.FastPedalsFrontEndTheme
 import java.io.File
 import java.io.FileOutputStream
@@ -63,7 +64,8 @@ import java.io.IOException
 @Composable
 fun CreateScreen(
     onCreate: (Long) -> Unit,
-    createViewModel: CreateViewModel
+    createViewModel: CreateViewModel,
+    imageViewModel: ImageViewModel
 ) {
 
     val createState by createViewModel.createState.collectAsState()
@@ -75,27 +77,19 @@ fun CreateScreen(
     val isBrandDropdownExpanded by createViewModel.isBrandDropdownExpanded.collectAsState()
     val isTypeDropdownExpanded by createViewModel.isTypeDropdownExpanded.collectAsState()
     val isEditingImages by createViewModel.isEditingImages.collectAsState()
-    val areImagesPicked by createViewModel.areImagesPicked.collectAsState()
 
-    val imageUris by createViewModel.imageUris.collectAsState()
+    val imageUris by imageViewModel.imageUris.collectAsState()
     val context = LocalContext.current
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
-
-            if(areImagesPicked) {
-                if(isEditingImages) {
-                    createViewModel.updateImageUris(imageUris + uris)
-                    createViewModel.toggleEditingImages()
-                } else {
-                    createViewModel.updateImageUris(uris)
-                }
+            if(isEditingImages) {
+                imageViewModel.updateImageUris(imageUris + uris)
+                createViewModel.toggleEditingImages()
             } else {
-                createViewModel.updateImageUris(uris)
-                createViewModel.toggleImagesPicked()
+                imageViewModel.updateImageUris(uris)
             }
-
         }
     )
 
@@ -322,43 +316,28 @@ fun CreateScreen(
                                     .padding(8.dp)
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            if (areImagesPicked) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceEvenly
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Button(
+                                    onClick = {
+                                        createViewModel.toggleEditingImages()
+                                        imagePickerLauncher.launch(
+                                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                        )
+                                    },
                                 ) {
-                                    Button(
-                                        onClick = {
-                                            createViewModel.toggleEditingImages()
-                                            imagePickerLauncher.launch(
-                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                            )
-                                        },
-                                    ) {
-                                        Text("Add Images")
-                                    }
-                                    Button(
-                                        onClick = {
-                                            imagePickerLauncher.launch(
-                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                            )
-                                        }
-                                    ) {
-                                        Text("Change Images")
-                                    }
+                                    Text("Add Images")
                                 }
-                            } else {
                                 Button(
                                     onClick = {
                                         imagePickerLauncher.launch(
                                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                                         )
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp)
+                                    }
                                 ) {
-                                    Text("Select Images")
+                                    Text("Change Images")
                                 }
                             }
                             Spacer(modifier = Modifier.height(8.dp))
@@ -427,7 +406,6 @@ fun CreateScreen(
                                 }
                             }
                         }
-
                     }
                 }
             }

@@ -83,85 +83,8 @@ class ListingViewModel(
         }
     }
 
-    private fun generatePresignedDownloadUrl(key: String) : LiveData<String> {
-        val urlLiveData = MutableLiveData<String>()
-
-        viewModelScope.launch {
-            val response = listingService.generatePresignedDownloadUrl(key)
-            if (response.isSuccessful) {
-                val url = response.body()?.presignedUrl.toString()
-                urlLiveData.postValue(url)
-            } else {
-                _listingState.value = ListingState.Error("An error occurred while generating presigned download url")
-            }
-        }
-
-        return urlLiveData
-
-    }
-
-    private suspend fun downloadImage(imageUrl: String, context: Context, fileName: String): File? {
-        val response = listingService.downloadImage(imageUrl)
-        return if (response.isSuccessful) {
-            val responseBody = response.body()
-            responseBody?.let {
-                saveImageToFile(it.byteStream(), fileName, context)
-            }
-        } else {
-            null
-        }
-    }
-
-    private fun saveImageToFile(inputStream: InputStream, fileName: String, context: Context): File {
-        val tempDir = context.cacheDir
-        val file = File(tempDir, fileName)
-
-        inputStream.use { input ->
-            file.outputStream().use { output ->
-                input.copyTo(output)
-            }
-        }
-
-        return file
-    }
-
-    private fun downloadAndSaveImage(key: String, context: Context) {
-
-        val urlLiveData = generatePresignedDownloadUrl(key)
-
-        urlLiveData.observeForever { url ->
-            url?.let {
-                viewModelScope.launch {
-                    val response = downloadImage(url, context, key)
-                    if (response != null) {
-                        val currentImageFiles = _imageFiles.value.toMutableMap()
-                        currentImageFiles[key] = response
-                        _imageFiles.value = currentImageFiles
-                    }
-                }
-            }
-        }
-
-    }
-
-    fun fetchAllFirstImages(context: Context) {
-        viewModelScope.launch {
-            _listingState.value = ListingState.Loading
-            _listings.value?.forEach { listing ->
-                listing.images.firstOrNull()?.let { key ->
-                    downloadAndSaveImage(key, context)
-                }
-            }
-            _listingState.value = ListingState.Success
-        }
-    }
-
-    fun fetchMultipleImages(context: Context, keys: List<String>) {
-        viewModelScope.launch {
-            keys.forEach { key ->
-                downloadAndSaveImage(key, context)
-            }
-        }
+    fun resetListings() {
+        _listings.value = null
     }
 
 }

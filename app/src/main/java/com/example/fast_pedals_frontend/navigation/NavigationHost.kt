@@ -40,6 +40,7 @@ import com.example.fast_pedals_frontend.create.CreateViewModel
 import com.example.fast_pedals_frontend.edit.EditScreen
 import com.example.fast_pedals_frontend.edit.EditViewModel
 import com.example.fast_pedals_frontend.edit.SharedEditViewModel
+import com.example.fast_pedals_frontend.imageStorage.ImageViewModel
 import com.example.fast_pedals_frontend.listing.ListingScreen
 import com.example.fast_pedals_frontend.listing.ListingViewModel
 import com.example.fast_pedals_frontend.navigation.NavDestinations.BIKE
@@ -76,6 +77,7 @@ fun NavigationHost(navController: NavHostController) {
     val profileViewModel: ProfileViewModel = koinViewModel()
     val favouriteViewModel: SharedFavouriteViewModel = koinViewModel()
     val startViewModel: StartViewModel = koinViewModel()
+    val imageViewModel: ImageViewModel = koinViewModel()
 
     val isLogged by startViewModel.isLogged.collectAsState()
     val state by startViewModel.startState.collectAsState()
@@ -206,6 +208,7 @@ fun NavigationHost(navController: NavHostController) {
                         ListingScreen(
                             listingViewModel = listingViewModel,
                             sharedCriteriaViewModel = sharedCriteriaViewModel,
+                            imageViewModel = imageViewModel,
                             onClick = { listingId ->
                                 currentRoute = "$BIKE/$listingId"
                             },
@@ -233,7 +236,7 @@ fun NavigationHost(navController: NavHostController) {
                                 onListingsClick = { currentRoute = LISTING },
                                 sharedEditViewModel = sharedEditViewModel,
                                 sharedCriteriaViewModel = sharedCriteriaViewModel,
-                                listingViewModel = listingViewModel
+                                imageViewModel = imageViewModel
                             )
                         }
                     }
@@ -242,7 +245,8 @@ fun NavigationHost(navController: NavHostController) {
                             onCreate = { listingId ->
                                 currentRoute = "$BIKE/$listingId"
                             },
-                            createViewModel = createViewModel
+                            createViewModel = createViewModel,
+                            imageViewModel = imageViewModel
                         )
                     }
                     composable("$EDIT/{listingId}") { backStackEntry ->
@@ -255,7 +259,8 @@ fun NavigationHost(navController: NavHostController) {
                                 listingId = it,
                                 onBack = { currentRoute = "$BIKE/$listingId" },
                                 onEdit = { currentRoute = "$BIKE/$listingId" },
-                                sharedEditViewModel = sharedEditViewModel
+                                sharedEditViewModel = sharedEditViewModel,
+                                imageViewModel = imageViewModel
                             )
                         }
                     }

@@ -12,15 +12,4 @@ interface CreateService {
         createRequest: CreateRequest
     ): Response<CreateResponse>
 
-    suspend fun generatePresignedUploadUrl(
-        key: String,
-        contentType: String
-    ): Response<PresignedResponse>
-
-    suspend fun uploadImage(
-        presignedUrl: String,
-        image: ByteArray,
-        contentType: String
-    ): Response<Unit>
-
 }
